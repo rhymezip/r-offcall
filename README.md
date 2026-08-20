@@ -104,7 +104,7 @@ For vulnerability reporting, see [SECURITY.md](./SECURITY.md).
 ## Install
 
 ```bash
-git clone <your-repository-url>
+git clone https://github.com/rhymezip/r-offcall.git
 cd r-offcall
 python -m venv .venv
 ```
@@ -123,7 +123,7 @@ pip install -r requirements.txt
 |---|---|---|
 | macOS | `python src/main.py` | Approve camera/microphone prompts. Embedded WKWebView cannot share the desktop; use a compatible browser for that feature. |
 | Windows | `python src/main.py` | Windows 10/11 should provide WebView2. Enable desktop-app camera/microphone access if media is denied. |
-| Linux | `python src/main.py` | Requirements install Qt6 WebEngine. Install your distribution's Qt/XCB runtime packages if the GUI cannot start. Screen sharing is supported. |
+| Linux | `python src/main.py` | Requirements install Qt6 WebEngine. Install  distribution's Qt/XCB runtime packages if the GUI cannot start. Screen sharing is supported. |
 
 ## First meeting
 
