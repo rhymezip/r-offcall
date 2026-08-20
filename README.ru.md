@@ -99,7 +99,7 @@ r-offcall предназначен для **доверенной локальн�
 - Разрешения камеры/микрофона на настольных клиентах, передающих медиа
 
 ```bash
-git clone <адрес-вашего-репозитория>
+git clone https://github.com/rhymezip/r-offcall.git
 cd r-offcall
 python -m venv .venv
 ```
