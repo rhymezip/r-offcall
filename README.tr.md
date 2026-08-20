@@ -99,7 +99,7 @@ Güvenlik problemi bildirmek için [SECURITY.md](./SECURITY.md) dosyasına bakı
 - Medya yayınlayacak masaüstü istemcilerde kamera/mikrofon izni
 
 ```bash
-git clone <depo-adresiniz>
+git clone https://github.com/rhymezip/r-offcall.git
 cd r-offcall
 python -m venv .venv
 ```
