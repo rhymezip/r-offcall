@@ -1,0 +1,10 @@
+pywebview==6.2.1
+pywebview[qt]; sys_platform == "linux"
+python-socketio==5.11.1
+aiohttp==3.9.5
+aiohttp-cors==0.7.0
+zeroconf==0.132.2
+aiodns
+pyobjc-framework-Cocoa; sys_platform == "darwin"
+pyobjc-framework-WebKit; sys_platform == "darwin"
+pyobjc-framework-AVFoundation; sys_platform == "darwin"

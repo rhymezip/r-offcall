@@ -1,0 +1,42 @@
+# Python bytecode and tooling
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# Virtual environments and package artifacts
+.venv/
+venv/
+env/
+ENV/
+*.egg-info/
+build/
+dist/
+wheelhouse/
+
+# Application-local or sensitive configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+
+# IDE and operating-system files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs and local runtime data
+*.log
+logs/
+.pywebview/

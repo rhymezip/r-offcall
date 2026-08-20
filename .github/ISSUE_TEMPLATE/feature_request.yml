@@ -1,0 +1,34 @@
+name: Feature request
+description: Suggest an improvement that fits r-offcall's local-network scope.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please avoid including passwords, private network details, recordings, or personal data.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: What user or institution need is currently unmet?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Explain the expected behavior and any platform implications.
+    validations:
+      required: true
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Primary scope
+      options:
+        - Desktop application
+        - Browser client
+        - Local network / discovery
+        - Moderation / room flow
+        - Documentation
+        - Security / deployment
