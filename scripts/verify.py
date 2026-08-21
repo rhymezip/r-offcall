@@ -76,9 +76,15 @@ async def check_static_server() -> None:
 def main() -> None:
     import py_compile
     import main
+    from discovery import SERVICE_TYPE, _service_name_for_host
 
     for source in SRC.glob("*.py"):
         py_compile.compile(str(source), doraise=True)
+
+    assert _service_name_for_host("Lab Mac #12") == (
+        "r-offcall-Lab-Mac--12." + SERVICE_TYPE
+    )
+    assert _service_name_for_host("---") == "r-offcall-host." + SERVICE_TYPE
 
     screen_request = DesktopRequest(screens=1)
     assert main._select_desktop_media(screen_request)
@@ -90,7 +96,7 @@ def main() -> None:
 
     assert not main._select_desktop_media(DesktopRequest(screens=0, windows=0))
     asyncio.run(check_static_server())
-    main.discovery.close()
+    main.on_closed()
     print("Verification passed")
 
 

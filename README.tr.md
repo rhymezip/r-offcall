@@ -135,6 +135,7 @@ pip install -r requirements.txt
 | Öğe | Mevcut davranış |
 |---|---|
 | Host portu | `7800` — `src/discovery.py` |
+| mDNS servis adı | Her host için benzersizdir; yinelenen isimler uygulamayı kapatmak yerine otomatik yeniden adlandırılır |
 | İstemci yerel arayüz portu | `7801`’den başlar; masaüstü sayfasını loopback güvenli bağlamında çalıştırır |
 | STUN | `stun.l.google.com:19302` |
 | Kalıcılık | Yok; host yeniden başlarsa tüm oda durumu silinir |

@@ -140,6 +140,7 @@ pip install -r requirements.txt
 | Item | Current behavior |
 |---|---|
 | Host port | `7800`, defined in `src/discovery.py` |
+| mDNS service name | Unique per host; duplicate names are automatically renamed instead of crashing the host |
 | Client local UI port | Starts at `7801`; keeps the desktop page on a loopback secure context |
 | STUN | `stun.l.google.com:19302` |
 | Persistence | None; host restart clears all room state |

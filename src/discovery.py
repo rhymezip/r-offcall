@@ -4,8 +4,24 @@ import ipaddress
 from zeroconf import ServiceBrowser, ServiceInfo, Zeroconf
 
 SERVICE_TYPE = "_roffcall._tcp.local."
-SERVICE_NAME = "r-offcall._roffcall._tcp.local."
 PORT = 7800
+
+
+def _service_name_for_host(hostname: str | None = None) -> str:
+    """Return an mDNS instance name that does not collide across hosts.
+
+    Service *types* are shared by every r-offcall host. The old fixed instance
+    name made a second machine on the same network fail with
+    ``NonUniqueNameException``. A readable hostname-based instance keeps hosts
+    distinguishable while Zeroconf's name-change fallback covers duplicates.
+    """
+    raw_name = hostname or socket.gethostname()
+    safe_name = "".join(
+        character if character.isalnum() or character == "-" else "-"
+        for character in raw_name
+    ).strip("-")
+    safe_name = safe_name[:48] or "host"
+    return f"r-offcall-{safe_name}.{SERVICE_TYPE}"
 
 
 class HostDiscovery:
@@ -15,6 +31,7 @@ class HostDiscovery:
         self._lock = threading.Lock()
         self._browser = None
         self._registered = False
+        self._service_info = None
 
     def get_local_ip(self):
         candidates = []
@@ -50,27 +67,31 @@ class HostDiscovery:
         ip = self.get_local_ip()
         info = ServiceInfo(
             SERVICE_TYPE,
-            SERVICE_NAME,
+            _service_name_for_host(),
             addresses=[socket.inet_aton(ip)],
             port=PORT,
             properties={"version": "1.0"},
         )
-        self.zeroconf.register_service(info)
+        try:
+            # If two computers happen to have the same hostname, Zeroconf
+            # renames the advertised instance instead of aborting the app.
+            self.zeroconf.register_service(info, allow_name_change=True)
+        except Exception as exc:
+            # A meeting host is still useful without automatic discovery:
+            # participants can join directly with http://<host-ip>:7800.
+            print(f"[mDNS] Host registration unavailable: {exc}")
+            return False
+
+        self._service_info = info
         self._registered = True
-        print(f"[mDNS] Host registered: {ip}:{PORT}")
+        print(f"[mDNS] Host registered: {info.name} ({ip}:{PORT})")
+        return True
 
     def close(self):
         if self._registered:
             try:
-                ip = self.get_local_ip()
-                info = ServiceInfo(
-                    SERVICE_TYPE,
-                    SERVICE_NAME,
-                    addresses=[socket.inet_aton(ip)],
-                    port=PORT,
-                    properties={"version": "1.0"},
-                )
-                self.zeroconf.unregister_service(info)
+                if self._service_info is not None:
+                    self.zeroconf.unregister_service(self._service_info)
             except Exception:
                 pass
         self.zeroconf.close()

@@ -16,9 +16,21 @@ import webview
 from discovery import HostDiscovery, PORT
 import permissions
 
-discovery = HostDiscovery()
-is_host   = False
-_window   = None
+discovery = None
+is_host = False
+_window = None
+
+
+def _discovery() -> HostDiscovery:
+    """Create the mDNS client only when the desktop app actually starts.
+
+    This keeps importing the module safe for deterministic checks and tools
+    that do not have permission to open multicast sockets.
+    """
+    global discovery
+    if discovery is None:
+        discovery = HostDiscovery()
+    return discovery
 
 
 def _pick_gui():
@@ -55,9 +67,10 @@ def _pick_local_port():
 
 def find_or_become_host():
     global is_host
-    discovery.start_browsing()
+    host_discovery = _discovery()
+    host_discovery.start_browsing()
     time.sleep(2)
-    hosts = discovery.get_hosts()
+    hosts = host_discovery.get_hosts()
     if hosts:
         ip, port = list(hosts.values())[0]
         print(f"[App] Host found: {ip}:{port}")
@@ -69,8 +82,8 @@ def find_or_become_host():
     print("[App] No host — becoming host")
     is_host = True
     _start_server()
-    discovery.register_as_host()
-    return f"http://127.0.0.1:{PORT}", f"http://{discovery.get_local_ip()}:{PORT}"
+    host_discovery.register_as_host()
+    return f"http://127.0.0.1:{PORT}", f"http://{host_discovery.get_local_ip()}:{PORT}"
 
 
 # ── Server ───────────────────────────────────────────────────────
@@ -188,7 +201,8 @@ def on_loaded():
 
 
 def on_closed():
-    discovery.close()
+    if discovery is not None:
+        discovery.close()
 
 
 # ── JS API ───────────────────────────────────────────────────────
@@ -198,7 +212,7 @@ class JSApi:
         self._real_url = real_ip_url or server_url
 
     def get_server_url(self):  return self._real_url
-    def get_local_ip(self):    return discovery.get_local_ip()
+    def get_local_ip(self):    return _discovery().get_local_ip()
     def get_is_host(self):     return is_host
     def exit_app(self):
         # JS-API thread'inden destroy cagirmak bazi surumlerde kilitlenebiliyor.
