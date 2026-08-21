@@ -1,9 +1,9 @@
 """Native media-permission support for the desktop application.
 
-macOS has two gates for ``getUserMedia``: application-level TCC approval and
-WKWebView's per-origin capture decision. The WebKit delegate has to be ready
-before the view exists; installing it after JavaScript has asked for media is
-racy and can result in a silent denial.
+macOS has application-level TCC approval for ``getUserMedia``. The WKWebView
+fallback also has a per-origin capture decision; its delegate has to be ready
+before the view exists, otherwise media can be silently denied. The primary
+macOS renderer is Qt WebEngine and does not install that WKWebView delegate.
 """
 
 from __future__ import annotations
@@ -21,16 +21,28 @@ _STATUS: dict[str, Any] = {
     "error": None,
 }
 _delegate_installed = False
+_webview_backend = None
+
+
+def configure_backend(backend: str | None) -> None:
+    """Record the renderer selected by the desktop entry point."""
+    global _webview_backend
+    _webview_backend = backend
 
 
 def install_webview_permissions() -> dict[str, Any]:
     """Install the macOS WKWebView delegate before ``webview.start``.
 
-    It deliberately does nothing on non-macOS platforms, keeping the desktop
-    startup path identical on macOS, Windows, and Linux.
+    It deliberately does nothing on non-macOS platforms and when Qt WebEngine
+    is selected, keeping the desktop startup path identical on macOS, Windows,
+    and Linux.
     """
     global _delegate_installed
-    if platform.system() != "Darwin" or _delegate_installed:
+    if (
+        platform.system() != "Darwin"
+        or _webview_backend == "qt"
+        or _delegate_installed
+    ):
         return dict(_STATUS)
 
     try:

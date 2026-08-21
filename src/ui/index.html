@@ -460,6 +460,7 @@ html,body{height:100%;width:100%;background:var(--bg);color:var(--text);
 const S = (() => {
   let d = {
     screen:'perms',
+    platform:'browser',
     user:{sid:null,name:'',role:'student',faculty:''},
     room:null, rooms:[],
     serverUrl:'http://localhost:7800',
@@ -552,25 +553,25 @@ async function preparePermissions(){
     }
   }
 
-  // Masaustu: QtWebEngine 6.x ekran paylasimini destekler (hint icin
-  // tarayici probe gerekli degil); diger backend'lerde (Qt 5.15, WebKitGTK,
-  // WKWebView) getDisplayMedia yoktur ve probe islemez.
+  // Linux masaustu sürümünde ekran paylaşımı sunulmuyor; izin ekranında
+  // bağlantı ya da hata izlenimi veren bir satır göstermeyelim.
   const isDesktop=!!(window.pywebview&&window.pywebview.api);
+  const isLinuxDesktop=isDesktop&&S.get('platform')==='Linux';
+  if(isLinuxDesktop){
+    const screenRow=document.getElementById('perm-screen');
+    if(screenRow) screenRow.style.display='none';
+  }
+
   let desktopShare=false;
   if(isDesktop){ try{ desktopShare=!!(await window.pywebview.api.screen_share_supported()); }catch(e){} }
-  if(isDesktop&&!desktopShare){
+  if(isLinuxDesktop){
+    // Ekran paylaşımı bu masaüstü yolunda bilinçli olarak kapalıdır.
+  }else if(isDesktop&&!desktopShare){
     setPerm('screen','Masaüstü uygulaması bu backend\'de desteklemiyor — tarayıcıdan katılırsan ekran paylaşabilirsin',null);
   }else{
-    try{
-      setPerm('screen','Sistem penceresi bekleniyor...',null);
-      const screen=await navigator.mediaDevices.getDisplayMedia({video:{cursor:'always'},audio:false});
-      screen.getTracks().forEach(t=>t.stop());
-      setPerm('screen','Hazır',true);
-    }catch(e){
-      const skipped=e.name==='AbortError'||e.name==='NotAllowedError';
-      setPerm('screen',skipped?'Atlandı veya reddedildi':'Başlatılamadı',false);
-      Toast.show('Ekran paylaşımı izni daha sonra tekrar istenebilir', skipped?'':'err');
-    }
+    // getDisplayMedia yalnızca gerçek ekran-paylaşım tıklamasında çağrılır.
+    // Böylece macOS sistem seçicisi kullanıcı hareketiyle açılır.
+    setPerm('screen','Odaya katıldıktan sonra istenir',null);
   }
 
   _permissionPreflightStarted=false;
@@ -663,7 +664,11 @@ function togCam() {
 
 async function togScreen() {
   if(S.get('media').screen){ stopScreen(); return; }
-  // Masaustu backendlerinden getDisplayMedia sadece QtWebEngine 6.x'te var.
+  if(window.pywebview&&window.pywebview.api&&S.get('platform')==='Linux'){
+    Toast.show('Linux masaüstü sürümünde ekran paylaşımı henüz desteklenmiyor. Bu bir bağlantı hatası değildir.');
+    return;
+  }
+  // Yerleşik masaüstü renderer'larında ekran seçimi yalnızca macOS Qt6 yolunda açıktır.
   if(window.pywebview&&window.pywebview.api){
     let ok=true;
     try{ ok=!!(await window.pywebview.api.screen_share_supported()); }catch(e){ ok=false; }
@@ -1220,6 +1225,9 @@ async function waitPywebview(){
 window.addEventListener('DOMContentLoaded',async()=>{
   const url=await waitPywebview();
   S.set('serverUrl',url.replace(/\/$/,''));
+  if(window.pywebview&&window.pywebview.api&&pywebview.api.get_platform){
+    try{ S.set('platform',await pywebview.api.get_platform()); }catch(e){}
+  }
 
   document.getElementById('inp-name').addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
   document.getElementById('inp-faculty').addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });

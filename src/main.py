@@ -19,6 +19,7 @@ import permissions
 discovery = None
 is_host = False
 _window = None
+_gui = None
 
 
 def _discovery() -> HostDiscovery:
@@ -34,18 +35,24 @@ def _discovery() -> HostDiscovery:
 
 
 def _pick_gui():
-    # Linux: QtWebEngine (Chromium) supports getDisplayMedia.
-    if platform.system() != "Linux":
+    """Use Qt6 WebEngine where desktop screen capture is supported.
+
+    macOS defaults to WKWebView in pywebview. Its media-capture delegate
+    interferes with getDisplayMedia on affected WebKit versions, so macOS uses
+    the same Chromium-based Qt renderer as the supported desktop path.
+    """
+    system = platform.system()
+    if system not in ("Linux", "Darwin"):
         return None
     for mod in ("PyQt6.QtWebEngineWidgets",):
         try:
             import importlib
             importlib.import_module(mod)
-            print(f"[App] Linux: Qt backend ({mod})")
+            print(f"[App] {system}: Qt backend ({mod})")
             return "qt"
         except ImportError:
             continue
-    print("[App] Linux: QtWebEngine bulunamadı")
+    print(f"[App] {system}: QtWebEngine bulunamadı")
     return None
 
 
@@ -131,9 +138,8 @@ def _start_server(bind_host="0.0.0.0", port=PORT):
 
 # ── Window events ────────────────────────────────────────────────
 def _screen_capture_supported() -> bool:
-    """QtWebEngine 6.x+ ekran paylasimini (getDisplayMedia) destekler;
-    Qt 5.15 / WebKitGTK / WKWebView desteklemez."""
-    if platform.system() != "Linux":
+    """Screen sharing is enabled only in the macOS Qt6 desktop renderer."""
+    if platform.system() != "Darwin" or _gui != "qt":
         return False
     try:
         import webview.platforms.qt as qtmod
@@ -196,7 +202,7 @@ def on_loaded():
     system = platform.system()
     print(f"[App] Loaded ({system})")
 
-    if system == "Linux":
+    if system == "Darwin":
         _hook_desktop_media()
 
 
@@ -214,6 +220,7 @@ class JSApi:
     def get_server_url(self):  return self._real_url
     def get_local_ip(self):    return _discovery().get_local_ip()
     def get_is_host(self):     return is_host
+    def get_platform(self):    return platform.system()
     def exit_app(self):
         # JS-API thread'inden destroy cagirmak bazi surumlerde kilitlenebiliyor.
         # Cagriyi hemen dondur, kapamayi ayri thread'de yap; 2sn icinde
@@ -240,8 +247,10 @@ class JSApi:
 
 # ── Main ─────────────────────────────────────────────────────────
 def main():
-    global _window
+    global _window, _gui
     server_url, real_ip_url = find_or_become_host()
+    _gui = _pick_gui()
+    permissions.configure_backend(_gui)
     url = server_url.rstrip("/") + "/"
     print(f"[App] Loading: {url}")
 
@@ -257,10 +266,10 @@ def main():
     _window.events.loaded += on_loaded
     _window.events.closed += on_closed
 
-    # Must run before pywebview creates the WKWebView; doing this from JS after
-    # a capture request is too late and causes silent denials on macOS clients.
+    # Only the WKWebView fallback needs this delegate. Qt WebEngine grants
+    # camera/microphone requests itself and handles display capture separately.
     permissions.install_webview_permissions()
-    webview.start(debug=False, gui=_pick_gui())
+    webview.start(debug=False, gui=_gui)
 
 
 if __name__ == "__main__":

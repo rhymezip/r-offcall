@@ -65,7 +65,7 @@ r-offcall bu net kullanım alanına odaklanır: **küçük, güvenilir ve aynı 
 | Keşif | mDNS / Zeroconf | Çoklu yayın destekleyen aynı ağda host’u bulur. |
 | Sinyalleşme | İstemci ↔ host | Oda üyeliği, WebRTC offer/answer, ICE adayları ve moderasyon olayları. |
 | Kamera / mikrofon | Katılımcı ↔ katılımcı | Peer-to-peer WebRTC medyası; host olmak medyayı otomatik almaz. |
-| Ekran paylaşımı | Katılımcı ↔ katılımcı | Linux Qt6 masaüstü uygulaması ve uyumlu tarayıcılarda desteklenir. |
+| Ekran paylaşımı | Katılımcı ↔ katılımcı | macOS Qt6 masaüstü uygulaması ve uyumlu tarayıcılarda desteklenir. Linux masaüstü arayüzünde özellikle devre dışıdır. |
 
 ## Artılar ve eksiler
 
@@ -76,7 +76,7 @@ r-offcall bu net kullanım alanına odaklanır: **küçük, güvenilir ve aynı 
 | mDNS, yakındaki host’u kolayca buldurur. | VLAN, misafir Wi‑Fi izolasyonu, VPN veya multicast engeli keşfi bozabilir. |
 | Oda şifresi ve moderasyon hafif bir erişim katmanı sağlar. | Şifreler ve oda durumu host belleğindedir; kurumsal düzeyde erişim kontrolü değildir. |
 | Aynı LAN’daki görüşmeler internetsiz çalışabilir. | Google STUN isteğe bağlı yardımcıdır; ağlar arası görüşmeler kapsam dışıdır. |
-| Masaüstü arayüzü macOS, Windows ve Linux’ta çalışır. | Linux ekran paylaşımı Qt6 WebEngine ister; gömülü macOS WKWebView `getDisplayMedia` desteklemez. |
+| Masaüstü arayüzü macOS, Windows ve Linux’ta çalışır. | macOS ekran paylaşımı Qt6 WebEngine ister. Linux masaüstü uygulamasında ekran paylaşımı özellikle desteklenmez. |
 | Tarayıcı katılımı kolay paylaşılır. | Bazı tarayıcılar düz HTTP LAN adresinde kamera/mikrofonu engeller; masaüstü uygulaması veya HTTPS gerekir. |
 
 ## Güvenlik ve gizlilik sınırı
@@ -116,9 +116,9 @@ pip install -r requirements.txt
 
 | Platform | Çalıştırma | Not |
 |---|---|---|
-| macOS | `python src/main.py` | İstendiğinde kamera/mikrofon izni verin. Yerleşik WKWebView ekran paylaşımını desteklemez; bunun için uyumlu tarayıcı kullanın. |
+| macOS | `python src/main.py` | Gereksinimler Qt6 WebEngine’i kurar. İstendiğinde kamera/mikrofon ve Ekran Kaydı izinlerini verin; ardından oda araç çubuğundan paylaşın. |
 | Windows | `python src/main.py` | Windows 10/11 WebView2 sağlamalıdır. Medya reddedilirse Gizlilik ve Güvenlik ayarlarından masaüstü uygulaması erişimini açın. |
-| Linux | `python src/main.py` | Gereksinimler Qt6 WebEngine’i kurar. Arayüz açılmazsa dağıtımınızın Qt/XCB çalışma zamanı paketlerini kurun. Ekran paylaşımı desteklenir. |
+| Linux | `python src/main.py` | Gereksinimler Qt6 WebEngine’i kurar. Arayüz açılmazsa dağıtımınızın Qt/XCB çalışma zamanı paketlerini kurun. Masaüstü ekran paylaşımı özellikle devre dışıdır. |
 
 ## İlk toplantı
 
@@ -146,7 +146,7 @@ pip install -r requirements.txt
 python scripts/verify.py
 ```
 
-Komut Python kaynaklarını derler, yerel statik sunucuyu kontrol eder ve Linux Qt ekran-seçim yolunu kamera ya da ekran gerektirmeden test eder.
+Komut Python kaynaklarını derler, yerel statik sunucuyu kontrol eder ve Qt ekran-seçim yolunu kamera ya da ekran gerektirmeden test eder.
 
 Kurum ihtiyaçları büyürse sonraki adımlar HTTPS, manuel host adresi, yerel kimlik/SSO, kalıcı politika ve denetim kaydı, TURN/SFU ve imzalı masaüstü paketleri olabilir.
 

@@ -41,7 +41,7 @@ r-offcall is built for that focused case: a **small, trusted, same-network meeti
 - **Desktop and browser entry.** Use the native app on macOS, Windows, or Linux; browser clients join at `http://<host-ip>:7800`.
 - **Simple room controls.** Password-protected rooms, live membership, mute, kick, and session-lifetime bans.
 - **Classroom-friendly roles.** Teacher/student roles and optional faculty information make participant tiles easier to read.
-- **Platform-aware media.** Native permission handling, Linux Qt6 desktop screen sharing, and browser-based fallback where needed.
+- **Platform-aware media.** macOS uses Qt6 WebEngine for desktop screen sharing; Linux desktop clients clearly mark that feature as unavailable.
 
 ## Architecture
 
@@ -66,7 +66,7 @@ r-offcall is built for that focused case: a **small, trusted, same-network meeti
 | Discovery | mDNS / Zeroconf | Finds hosts on the same multicast-capable network. |
 | Signaling | Client ↔ host | Room membership, WebRTC offers/answers, ICE candidates, moderation events. |
 | Camera / microphone | Participant ↔ participant | WebRTC peer-to-peer media; hosting does not automatically receive media. |
-| Screen share | Participant ↔ participant | Linux Qt6 desktop app and compatible browsers. |
+| Screen share | Participant ↔ participant | macOS Qt6 desktop app and compatible browsers. Linux desktop UI intentionally disables it. |
 
 ## Strengths and trade-offs
 
@@ -79,7 +79,7 @@ This project is intentionally focused. Its limitations are as important as its f
 | mDNS makes nearby-host discovery convenient. | VLANs, guest Wi-Fi isolation, VPNs, or multicast restrictions can block discovery. |
 | Passwords and moderation provide a lightweight access layer. | Passwords and room state are kept in host memory; this is not enterprise-grade access control. |
 | Same-LAN calls can work without internet. | Google STUN is configured as an optional aid; cross-network calls are not supported. |
-| The desktop app is cross-platform. | Linux screen sharing requires Qt6 WebEngine; embedded macOS WKWebView does not support `getDisplayMedia`. |
+| The desktop app is cross-platform. | macOS screen sharing requires Qt6 WebEngine. Linux desktop screen sharing is intentionally unavailable. |
 | Browser clients are easy to distribute. | Some browsers restrict camera/microphone on plain HTTP LAN origins; use the desktop app or HTTPS where that policy applies. |
 
 ## Security and privacy boundary
@@ -121,9 +121,9 @@ pip install -r requirements.txt
 
 | Platform | Run | Notes |
 |---|---|---|
-| macOS | `python src/main.py` | Approve camera/microphone prompts. Embedded WKWebView cannot share the desktop; use a compatible browser for that feature. |
+| macOS | `python src/main.py` | Requirements install Qt6 WebEngine. Approve camera/microphone and Screen Recording prompts when requested, then share from the room toolbar. |
 | Windows | `python src/main.py` | Windows 10/11 should provide WebView2. Enable desktop-app camera/microphone access if media is denied. |
-| Linux | `python src/main.py` | Requirements install Qt6 WebEngine. Install  distribution's Qt/XCB runtime packages if the GUI cannot start. Screen sharing is supported. |
+| Linux | `python src/main.py` | Requirements install Qt6 WebEngine. Install your distribution's Qt/XCB runtime packages if the GUI cannot start. Desktop screen sharing is intentionally disabled. |
 
 ## First meeting
 
@@ -154,7 +154,7 @@ src/
 ├── main.py          # Desktop startup, host/client choice, platform bridges
 ├── server.py        # aiohttp + Socket.IO signaling and moderation
 ├── discovery.py     # Zeroconf/mDNS host discovery
-├── permissions.py   # macOS TCC and WKWebView permission bridge
+├── permissions.py   # macOS TCC permission bridge and WKWebView fallback
 └── ui/              # Single-page WebRTC client
 scripts/
 └── verify.py        # Fast deterministic core checks
@@ -166,7 +166,7 @@ scripts/
 python scripts/verify.py
 ```
 
-The check compiles Python sources, verifies the local static server, and tests the Linux Qt desktop-media selection path without requiring a camera or display.
+The check compiles Python sources, verifies the local static server, and tests the Qt desktop-media selection path without requiring a camera or display.
 
 ## Roadmap ideas
 
@@ -175,7 +175,7 @@ The check compiles Python sources, verifies the local static server, and tests t
 - Optional local identities, SSO, or campus-directory integration
 - Persistent room policy and audit logs
 - TURN/SFU support for larger groups or routed networks
-- Signed desktop packages and a macOS screen-sharing-capable renderer
+- Signed desktop packages and a future Linux desktop screen-sharing implementation
 
 ## Contributing and license
 
