@@ -4,7 +4,7 @@ pywebview[qt]; sys_platform == "darwin"
 python-socketio==5.11.1
 aiohttp==3.9.5
 aiohttp-cors==0.7.0
-zeroconf==0.132.2
+zeroconf==0.150.0
 aiodns
 pyobjc-framework-Cocoa; sys_platform == "darwin"
 pyobjc-framework-WebKit; sys_platform == "darwin"
