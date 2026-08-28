@@ -31,28 +31,47 @@ html,body{height:100%;width:100%;background:var(--bg);color:var(--text);
    PERMISSIONS / LOGIN
 ════════════════════════════════════════════ */
 #screen-perms,#screen-login{align-items:center;justify-content:center}
+.loading-wrap{display:flex;flex-direction:column;align-items:center;gap:24px}
+.spinner{width:28px;height:28px;border:3px solid var(--bg5);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.lang-btn{
+  position:fixed;top:14px;right:14px;z-index:10;
+  background:var(--bg3);border:1px solid var(--border2);color:var(--text2);
+  border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;
+  cursor:pointer;transition:all .15s;font-family:var(--font);
+  display:flex;align-items:center;gap:5px
+}
+.lang-btn:hover{border-color:var(--accent);color:var(--accent)}
+.ico{display:inline-block;width:1em;height:1em;background:var(--ic) center/contain no-repeat;vertical-align:middle;flex-shrink:0;line-height:1}
+.ico-globe{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23909090' stroke-width='2'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z'/%3E%3C/svg%3E")}
+.ico-student{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23909090' stroke-width='2'%3E%3Cpath d='M22 10l-10-5L2 10l10 5 10-5z'/%3E%3Cpath d='M6 12v5c0 0 3 3 6 3s6-3 6-3v-5'/%3E%3C/svg%3E")}
+.ico-teacher{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23909090' stroke-width='2'%3E%3Cpath d='M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='9' cy='7' r='4'/%3E%3Cpath d='M23 21v-2a4 4 0 0 0-3-3.87'/%3E%3Cpath d='M16 3.13a4 4 0 0 1 0 7.75'/%3E%3C/svg%3E")}
+.ico-user{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23909090' stroke-width='2'%3E%3Cpath d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E")}
+.ico-lock{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23909090' stroke-width='2'%3E%3Crect x='3' y='11' width='18' height='11' rx='2'/%3E%3Cpath d='M7 11V7a5 5 0 0 1 10 0v4'/%3E%3C/svg%3E")}
+.ico-unlock{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23909090' stroke-width='2'%3E%3Crect x='3' y='11' width='18' height='11' rx='2'/%3E%3Cpath d='M7 11V7a5 5 0 0 1 9.9-1'/%3E%3C/svg%3E")}
+.ico-mic{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23909090' stroke-width='2'%3E%3Crect x='9' y='1' width='6' height='12' rx='3'/%3E%3Cpath d='M19 10v1a7 7 0 0 1-14 0v-1'/%3E%3Cline x1='12' y1='19' x2='12' y2='23'/%3E%3Cline x1='8' y1='23' x2='16' y2='23'/%3E%3C/svg%3E")}
+.ico-mic-off{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ef4444' stroke-width='2'%3E%3Cline x1='1' y1='1' x2='23' y2='23'/%3E%3Cpath d='M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6'/%3E%3Cpath d='M17 16.95A7 7 0 0 1 5 12v-2m14 0v2c0 .28-.02.56-.06.83'/%3E%3Cline x1='12' y1='19' x2='12' y2='23'/%3E%3Cline x1='8' y1='23' x2='16' y2='23'/%3E%3C/svg%3E")}
+.ico-cam{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23909090' stroke-width='2'%3E%3Cpolygon points='23 7 16 12 23 17 23 7'/%3E%3Crect x='1' y='5' width='15' height='14' rx='2'/%3E%3C/svg%3E")}
+.ico-screen{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23909090' stroke-width='2'%3E%3Crect x='2' y='3' width='20' height='14' rx='2'/%3E%3Cline x1='8' y1='21' x2='16' y2='21'/%3E%3Cline x1='12' y1='17' x2='12' y2='21'/%3E%3C/svg%3E")}
+.ico-trash{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23909090' stroke-width='2'%3E%3Cpolyline points='3 6 5 6 21 6'/%3E%3Cpath d='M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6'/%3E%3Cpath d='M10 11v6'/%3E%3Cpath d='M14 11v6'/%3E%3C/svg%3E")}
+.ico-volume{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23909090' stroke-width='2'%3E%3Cpolygon points='11 5 6 9 2 9 2 15 6 15 11 19 11 5'/%3E%3Cpath d='M19.07 4.93a10 10 0 0 1 0 14.14'/%3E%3Cpath d='M15.54 8.46a5 5 0 0 1 0 7.07'/%3E%3C/svg%3E")}
+.ico-volume-x{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23909090' stroke-width='2'%3E%3Cpolygon points='11 5 6 9 2 9 2 15 6 15 11 19 11 5'/%3E%3Cline x1='23' y1='9' x2='17' y2='15'/%3E%3Cline x1='17' y1='9' x2='23' y2='15'/%3E%3C/svg%3E")}
+.ico-gear{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23909090' stroke-width='2'%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3Cpath d='M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z'/%3E%3C/svg%3E")}
+.lang-list{display:flex;flex-direction:column;gap:6px}
+.lang-opt{
+  display:block;width:100%;text-align:left;background:var(--bg3);
+  border:1.5px solid var(--border2);border-radius:var(--r);
+  padding:10px 14px;color:var(--text);font-size:13px;font-weight:600;
+  cursor:pointer;transition:all .15s;font-family:var(--font)
+}
+.lang-opt:hover{border-color:var(--accent);color:var(--text)}
+.lang-opt.active{border-color:var(--accent);background:var(--accent-dim);color:var(--accent2)}
 .login-card{
   background:var(--bg2);border:1px solid var(--border2);
   border-radius:var(--rxl);padding:44px 52px;width:440px;
   display:flex;flex-direction:column;gap:22px;box-shadow:var(--shadow)
 }
-.perm-list{display:flex;flex-direction:column;gap:9px}
-.perm-row{
-  display:flex;align-items:center;justify-content:space-between;
-  background:var(--bg3);border:1px solid var(--border2);
-  border-radius:var(--r);padding:10px 12px;color:var(--text2)
-}
-.perm-row strong{color:var(--text);font-size:13px}
-.perm-state{font-size:12px;color:var(--text3)}
-.perm-row.ok{border-color:#14532d88}
-.perm-row.ok .perm-state{color:var(--green)}
-.perm-row.err{border-color:#450a0a88}
-.perm-row.err .perm-state{color:#fca5a5}
-.perm-note{font-size:12px;color:var(--text2);line-height:1.6;text-align:center}
-.btn-secondary{background:var(--bg3);color:var(--text2);border:1px solid var(--border2);
-  border-radius:var(--r);padding:11px;font-size:13px;font-weight:700;cursor:pointer;
-  transition:all .15s;font-family:var(--font)}
-.btn-secondary:hover{border-color:var(--accent);color:var(--accent2)}
+
 .brand{text-align:center}
 .brand-name{font-size:28px;font-weight:700;letter-spacing:-.5px;
   background:linear-gradient(135deg,var(--accent2),#c084fc);
@@ -111,6 +130,7 @@ html,body{height:100%;width:100%;background:var(--bg);color:var(--text);
   font-weight:700;text-transform:uppercase;letter-spacing:.4px}
 .badge-t{background:#3b0764aa;color:#c084fc;border:1px solid #7c3aed44}
 .badge-s{background:#14532d88;color:#86efac;border:1px solid #16653444}
+.badge-d{background:#1e293b88;color:#cbd5e1;border:1px solid #33415544}
 .lobby-body{display:flex;flex:1;overflow:hidden}
 .sidebar{
   width:280px;background:var(--bg2);border-right:1px solid var(--border);
@@ -192,6 +212,10 @@ html,body{height:100%;width:100%;background:var(--bg);color:var(--text);
 .tile video{width:100%;height:100%;object-fit:contain;display:block}
 .tile.self video{transform:scaleX(-1)}
 .tile.scrtile video{transform:none;object-fit:contain}
+.grid.scrmode{grid-template-rows:1fr auto;gap:8px}
+.grid.scrmode .scr-main{min-height:0}
+.scr-strip{display:flex;gap:8px;overflow-x:auto;padding:0 4px;height:120px;flex-shrink:0}
+.scr-strip .tile{flex:0 0 160px;height:100%;min-width:0}
 .av{
   width:64px;height:64px;border-radius:50%;
   background:var(--accent-dim);border:2px solid var(--accent);
@@ -209,6 +233,7 @@ html,body{height:100%;width:100%;background:var(--bg);color:var(--text);
 .tbadge{font-size:10px;padding:2px 6px;border-radius:100px}
 .tbadge-t{background:#3b076488;color:#c084fc}
 .tbadge-s{background:#14532d88;color:#86efac}
+.tbadge-d{background:#1e293b88;color:#cbd5e1}
 .tbadge-m{background:#450a0a88;color:#fca5a5}
 .tburger{
   background:rgba(0,0,0,.5);border:1px solid var(--border2);color:var(--text);
@@ -315,46 +340,42 @@ html,body{height:100%;width:100%;background:var(--bg);color:var(--text);
 </head>
 <body>
 
-<!-- ═══ PERMISSIONS ══════════════════════════════════════════ -->
+<!-- ═══ LOADING (perm izinleri arka planda istenir) ══════════ -->
 <div id="screen-perms" class="screen active">
-  <div class="login-card">
+  <div class="loading-wrap">
     <div class="brand">
       <div class="brand-name">r-offcall</div>
-      <div class="brand-sub">Cihaz İzinleri</div>
+      <div class="brand-sub" data-lang="loading">Loading…</div>
     </div>
-    <div class="perm-list">
-      <div class="perm-row" id="perm-cam"><strong>Kamera</strong><span class="perm-state">Bekliyor</span></div>
-      <div class="perm-row" id="perm-mic"><strong>Mikrofon</strong><span class="perm-state">Bekliyor</span></div>
-      <div class="perm-row" id="perm-screen"><strong>Ekran paylaşımı</strong><span class="perm-state">Bekliyor</span></div>
-    </div>
-    <p class="perm-note" id="perm-note">Kamera ve mikrofon izinleri isteniyor. Lütfen açılan sistem penceresini onaylayın.</p>
-    <button class="btn-secondary" id="btn-perms-skip" onclick="skipPermissions()" style="display:none">Devam Et →</button>
+    <div class="spinner"></div>
   </div>
 </div>
 
 <!-- ═══ LOGIN ════════════════════════════════════════════════ -->
 <div id="screen-login" class="screen">
+  <button class="lang-btn" onclick="oLangModal()"><span class="ico ico-globe"></span> EN</button>
   <div class="login-card">
     <div class="brand">
       <div class="brand-name">r-offcall</div>
-      <div class="brand-sub">Local Network Meeting</div>
+      <div class="brand-sub" data-lang="loginSub">Local Network Meeting</div>
     </div>
     <div class="field">
-      <label>Rol</label>
+      <label data-lang="role">Role</label>
       <div class="role-row">
-        <button class="role-btn active" id="rbtn-s" onclick="selRole('student')">🎓 Öğrenci</button>
-        <button class="role-btn"        id="rbtn-t" onclick="selRole('teacher')">👨‍🏫 Öğretmen</button>
+        <button class="role-btn active" id="rbtn-s" onclick="selRole('student')" data-lang="student"><span class="ico ico-student"></span> Student</button>
+        <button class="role-btn"        id="rbtn-t" onclick="selRole('teacher')" data-lang="teacher"><span class="ico ico-teacher"></span> Teacher</button>
+        <button class="role-btn"        id="rbtn-d" onclick="selRole('default')" data-lang="genDefault"><span class="ico ico-user"></span> General</button>
       </div>
     </div>
     <div class="field">
-      <label>Ad Soyad</label>
-      <input class="inp" id="inp-name" placeholder="Adınızı girin…" maxlength="50" autocomplete="off"/>
+      <label data-lang="fullName">Full Name</label>
+      <input class="inp" id="inp-name" data-lang="namePlaceholder" placeholder="Enter your name…" maxlength="50" autocomplete="off"/>
     </div>
     <div class="field" id="fld-faculty">
-      <label>Fakülte / Bölüm</label>
-      <input class="inp" id="inp-faculty" placeholder="Fakültenizi girin…" maxlength="80" autocomplete="off"/>
+      <label data-lang="faculty">Faculty / Department</label>
+      <input class="inp" id="inp-faculty" data-lang="facultyPlaceholder" placeholder="Enter your faculty…" maxlength="80" autocomplete="off"/>
     </div>
-    <button class="btn-primary" onclick="doLogin()">Giriş Yap →</button>
+    <button class="btn-primary" onclick="doLogin()" data-lang="loginBtn">Login →</button>
   </div>
 </div>
 
@@ -363,35 +384,36 @@ html,body{height:100%;width:100%;background:var(--bg);color:var(--text);
   <div class="topbar">
     <div class="topbar-brand">r-offcall</div>
     <div class="topbar-right">
+      <button class="lang-btn" onclick="oLangModal()" style="position:static"><span class="ico ico-globe"></span></button>
       <div class="conn-badge">
         <div class="conn-dot wait" id="cdot"></div>
-        <span id="clbl">Bağlanıyor…</span>
+        <span id="clbl" data-lang="connecting">Connecting…</span>
       </div>
       <div class="user-chip">
         <div class="user-av" id="uav">?</div>
         <span class="user-av-name" id="uname">—</span>
-        <span class="badge badge-s" id="ubadge">Öğrenci</span>
+        <span class="badge badge-s" id="ubadge" data-lang="student">Student</span>
       </div>
-      <button class="btn-sm" onclick="doExit()">Çıkış</button>
+      <button class="btn-sm" onclick="doExit()" data-lang="exit">Exit</button>
     </div>
   </div>
   <div class="lobby-body">
     <div class="sidebar">
-      <div class="sec-title">Oda Oluştur</div>
+      <div class="sec-title" data-lang="createRoom">Create Room</div>
       <div class="create-form">
-        <input class="inp" id="inp-rname" placeholder="Oda adı…" maxlength="60" autocomplete="off"/>
-        <input class="inp" id="inp-rpass" type="password" placeholder="Şifre (isteğe bağlı)" maxlength="30"/>
-        <button class="btn-create" onclick="doCreate()">+ Oda Oluştur</button>
+        <input class="inp" id="inp-rname" data-lang="roomName" placeholder="Room name…" maxlength="60" autocomplete="off"/>
+        <input class="inp" id="inp-rpass" type="password" data-lang="password" placeholder="Password (optional)" maxlength="30"/>
+        <button class="btn-create" onclick="doCreate()" data-lang="createBtn">+ Create Room</button>
       </div>
       <hr class="divider"/>
-      <div class="sec-title">Ağ</div>
+      <div class="sec-title" data-lang="network">Network</div>
       <div class="net-info">
         <div>IP: <span id="net-ip">—</span></div>
-        <div>Rol: <span id="net-role">İstemci</span></div>
+        <div><span data-lang="role">Role</span>: <span id="net-role" data-lang="client">Client</span></div>
       </div>
     </div>
     <div class="rooms-area">
-      <div class="rooms-title">Aktif Odalar</div>
+      <div class="rooms-title" data-lang="activeRooms">Active Rooms</div>
       <div id="rooms-list"></div>
     </div>
   </div>
@@ -401,36 +423,37 @@ html,body{height:100%;width:100%;background:var(--bg);color:var(--text);
 <div id="screen-room" class="screen">
   <div class="room-bar">
     <div class="room-bar-left">
-      <div class="room-ttl" id="room-ttl">Oda</div>
-      <div class="room-cnt" id="room-cnt">0 kişi</div>
+      <div class="room-ttl" id="room-ttl">Room</div>
+      <div class="room-cnt" id="room-cnt">0 <span data-lang="people">people</span></div>
     </div>
     <div class="room-bar-right">
-      <button class="btn-sm" id="btn-close" onclick="doClose()" style="display:none">🗑 Odayı Kapat</button>
-      <button class="btn-sm red" onclick="doLeave()">← Ayrıl</button>
-      <button class="btn-sm" onclick="doExit()">Çıkış</button>
+      <button class="btn-sm" onclick="oLangModal()"><span class="ico ico-globe"></span></button>
+      <button class="btn-sm" id="btn-close" onclick="doClose()" style="display:none"><span class="ico ico-trash"></span> <span data-lang="closeRoom">Close Room</span></button>
+      <button class="btn-sm red" onclick="doLeave()" data-lang="leaveRoom">← Leave</button>
+      <button class="btn-sm" onclick="doExit()" data-lang="exit">Exit</button>
     </div>
   </div>
   <div class="grid" id="grid" data-c="1"></div>
   <div class="tbar" id="tbar">
-    <span class="tbar-lbl">⚙ Yönetici</span>
-    <button class="btn-sm" id="btn-muteall" onclick="doMuteAll()">🔇 Hepsini Sustur</button>
+    <span class="tbar-lbl"><span class="ico ico-gear"></span> <span data-lang="admin">Admin</span></span>
+    <button class="btn-sm" id="btn-muteall" onclick="doMuteAll()" data-lang="muteAll">🔇 Mute All</button>
   </div>
   <div class="ctrls">
     <div class="cwrap">
-      <button class="cbtn off" id="cbtn-mic"    onclick="togMic()">🔇</button>
-      <span class="clbl">Mikrofon</span>
+      <button class="cbtn off" id="cbtn-mic"    onclick="togMic()"><span class="ico ico-mic-off"></span></button>
+      <span class="clbl" data-lang="micLabel">Microphone</span>
     </div>
     <div class="cwrap">
-      <button class="cbtn" id="cbtn-cam"     onclick="togCam()">📷</button>
-      <span class="clbl">Kamera</span>
+      <button class="cbtn" id="cbtn-cam"     onclick="togCam()"><span class="ico ico-cam"></span></button>
+      <span class="clbl" data-lang="camLabel">Camera</span>
     </div>
     <div class="cwrap">
-      <button class="cbtn" id="cbtn-screen"  onclick="togScreen()">🖥</button>
-      <span class="clbl">Ekran</span>
+      <button class="cbtn" id="cbtn-screen"  onclick="togScreen()"><span class="ico ico-screen"></span></button>
+      <span class="clbl" data-lang="screenLabel">Screen</span>
     </div>
     <div class="cwrap">
       <button class="cbtn leave" onclick="doLeave()">✕</button>
-      <span class="clbl">Ayrıl</span>
+      <span class="clbl" data-lang="leaveLabel">Leave</span>
     </div>
   </div>
 </div>
@@ -438,12 +461,28 @@ html,body{height:100%;width:100%;background:var(--bg);color:var(--text);
 <!-- ═══ MODAL (şifre) ════════════════════════════════════════ -->
 <div class="overlay" id="modal">
   <div class="modal">
-    <h3 id="mtitle">Şifre Gerekli</h3>
-    <p id="mdesc">Bu oda şifreli. Şifreyi girin:</p>
-    <input class="inp" id="minp" type="password" placeholder="Şifre…"/>
+    <h3 id="mtitle" data-lang="pwTitle">Password Required</h3>
+    <p id="mdesc" data-lang="pwDesc">This room is password protected. Enter the password:</p>
+    <input class="inp" id="minp" type="password" data-lang="pwPlaceholder" placeholder="Password…"/>
     <div class="modal-btns">
-      <button class="btn-cancel" onclick="mclose()">İptal</button>
-      <button class="btn-ok"     onclick="mconfirm()">Gir</button>
+      <button class="btn-cancel" onclick="mclose()" data-lang="pwCancel">Cancel</button>
+      <button class="btn-ok"     onclick="mconfirm()" data-lang="pwEnter">Join</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ LANGUAGE MODAL ══════════════════════════════════════ -->
+<div class="overlay" id="lang-modal">
+  <div class="modal" style="width:320px">
+    <h3><span class="ico ico-globe"></span> <span data-lang="langTitle">Language</span></h3>
+    <div class="lang-list">
+      <button class="lang-opt" data-l="tr" onclick="setLang('tr')">Türkçe</button>
+      <button class="lang-opt" data-l="tk" onclick="setLang('tk')">Türkmençe</button>
+      <button class="lang-opt" data-l="ru" onclick="setLang('ru')">Русский</button>
+      <button class="lang-opt" data-l="en" onclick="setLang('en')">English</button>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-ok" onclick="cLangModal()">Tamam</button>
     </div>
   </div>
 </div>
@@ -453,6 +492,205 @@ html,body{height:100%;width:100%;background:var(--bg);color:var(--text);
 
 <script>
 'use strict';
+
+// ════════════════════════════════════════════════════════
+//  I18N
+// ════════════════════════════════════════════════════════
+const I18N={
+tr:{
+  loading:'Yükleniyor…',
+  langTitle:'Dil Seçimi',
+  loginSub:'Yerel Ağ Toplantısı',
+  role:'Rol',student:'Öğrenci',teacher:'Öğretmen',genDefault:'Genel',
+  fullName:'Ad Soyad',namePlaceholder:'Adınızı girin…',
+  faculty:'Fakülte / Bölüm',facultyPlaceholder:'Fakültenizi girin…',
+  loginBtn:'Giriş Yap →',
+  connecting:'Bağlanıyor…',connected:'Bağlandı',reconnecting:'Yeniden bağlanıyor…',
+  connErr:'Bağlantı hatası',exit:'Çıkış',
+  createRoom:'Oda Oluştur',roomName:'Oda adı…',password:'Şifre (isteğe bağlı)',
+  createBtn:'+ Oda Oluştur',network:'Ağ',host:'Host 🟢',client:'İstemci',
+  activeRooms:'Aktif Odalar',noRooms:'Henüz oda yok.',
+  noRoomsHint:'Sol taraftan ilk odayı sen oluştur',
+  locked:'Şifreli',open:'Açık',
+  join:'Katıl',closeRoom:'Odayı Kapat',leaveRoom:'← Ayrıl',
+  admin:'Yönetici',muteAll:'Hepsini Sustur',unmuteAll:'Hepsini Aç',
+  micLabel:'Mikrofon',camLabel:'Kamera',screenLabel:'Ekran',leaveLabel:'Ayrıl',
+  muteMic:'Mikrofonu Kapat',unmuteMic:'Mikrofonu Aç',
+  kick:'Odadan At',ban:'Engelle',
+  pwTitle:'Şifre Gerekli',pwDesc:'Bu oda şifreli. Şifreyi girin:',
+  pwPlaceholder:'Şifre…',pwCancel:'İptal',pwEnter:'Gir',
+  errNameEmpty:'Ad Soyad boş olamaz',errNoConn:'Bağlantı yok',
+  errRoomName:'Oda adı girin',errPerm:'Kamera/Mikrofon izni alınamadı — Sistem Ayarları\'ndan izin ver',
+  errScreenNotSupp:'Linux masaüstü sürümünde ekran paylaşımı henüz desteklenmiyor. Bu bir bağlantı hatası değildir.',
+  errScreenBackend:'Ekran paylaşımı için tarayıcıdan katılın (bu backend desteklemiyor)',
+  errScreenInUse:'Başka biri zaten ekran paylaşıyor',
+  errCamNotFound:'Kamera bulunamadı',errMicNotFound:'Mikrofon bulunamadı',screenActive:'Ekran paylaşımı aktif',
+  screenFail:'Ekran paylaşımı başlatılamadı',
+  joined:' odaya katıldı',roomClosed:'Oda kapatıldı',
+  banned:'Bu odadan engellendiniz',kicked:'Odadan çıkarıldınız',
+  teacherMutedMic:'Öğretmen mikrofonunuzu kapattı',
+  selfMutedMic:'Mikrofonunuz kendiniz kapalı — açılamaz',
+  teacherOpenedMic:'Öğretmen mikrofonunuzu açtı',
+  allMuted:'Tüm mikrofonlar kapatıldı',allOpened:'Mikrofonlar açıldı',
+  you:'(Sen)',people:' kişi',screenTile:'Ekran',
+},
+tk:{
+  loading:'Ugryzýar…',
+  langTitle:'Dil Saýlawy',
+  loginSub:'Ýerel Senagat Toplantysy',
+  role:'Rol',student:'Okuwçy',teacher:'Uqretel',genDefault:'Umumy',
+  fullName:'Ady Familiýa',namePlaceholder:'Adyňyzy giriziň…',
+  faculty:'Fakulter / Bölümi',facultyPlaceholder:'Fakultiýeni giriziň…',
+  loginBtn:'Içeri Giriň →',
+  connecting:'Baglanyár…',connected:'Baglandy',reconnecting:'Täzeden baglanyár…',
+  connErr:'Baglanyşyk syzygy',exit:'Çykyş',
+  createRoom:'Ota Dörediň',roomName:'Ota ady…',password:'Gizlin sifre (opsional)',
+  createBtn:'+ Ota Dörediň',network:'Aýlyşyk',host:'Host 🟢',client:'Istemiçi',
+  activeRooms:'Işje Ota',noRooms:'Häzir ota ýok.',
+  noRoomsHint:'Soly ýerden ilki ota dörediň',
+  locked:'Sifreli',open:'Açyk',
+  join:'Giriň',closeRoom:'Otany Ýatyr',leaveRoom:'← Ayryl',
+  admin:'Dolandyryjy',muteAll:'Hepsini Ýatyr',unmuteAll:'Hepsini Aç',
+  micLabel:'Mikrofon',camLabel:'Kamera',screenLabel:'Ekran',leaveLabel:'Ayryl',
+  muteMic:'Mikrofony Ýatyr',unmuteMic:'Mikrofony Aç',
+  kick:'Otadan Çykar',ban:'Blokla',
+  pwTitle:'Sifre Gerekli',pwDesc:'Bu ota sifreli. Sifreni giriziň:',
+  pwPlaceholder:'Sifre…',pwCancel:'Ýokar',pwEnter:'Gir',
+  errNameEmpty:'Ady Familiýa bolup bilmeýär',errNoConn:'Baglanyşyk ýok',
+  errRoomName:'Ota ady giriziň',errPerm:'Kamera/Mikrofon rugsat alnamady — Sazlamalardan rugsat bermeli',
+  errScreenNotSupp:'Linux desctopynda ekran paýlaşygy häzir döredilmeýär. Bu baglanyşyk syzygy däl.',
+  errScreenBackend:'Ekran paýlaşygy üçin brauzerdan giriň (bu platforma goldawaýar)',
+  errScreenInUse:'Başga biri ekran paýlaşýar',
+  errCamNotFound:'Kamera taplamady',errMicNotFound:'Mikrofon taplamady',screenActive:'Ekran paýlaşygy işledi',
+  screenFail:'Ekran paýlaşygy başladylamady',
+  joined:' otana girdi',roomClosed:'Ota gapyldy',
+  banned:'Bu otadan bloklanedyňiz',kicked:'Otadan çykaryldyňyz',
+  teacherMutedMic:'Uqretel mikrofonyňyzy ýattyrdy',
+  selfMutedMic:'Mikrofonyňyz özüňizde ýatydy — açylmypdyr',
+  teacherOpenedMic:'Uqretel mikrofonyňyzy açdy',
+  allMuted:'Ähli mikrofonlar ýatdyryldy',allOpened:'Mikrofonlar açyldy',
+  you:'(Siz)',people:' adam',screenTile:'Ekran',
+},
+ru:{
+  loading:'Загрузка…',
+  langTitle:'Выбор языка',
+  loginSub:'Локальная сеть',
+  role:'Роль',student:'Студент',teacher:'Учитель',genDefault:'Общий',
+  fullName:'Имя и фамилия',namePlaceholder:'Введите имя…',
+  faculty:'Факультет / Кафедра',facultyPlaceholder:'Введите факультет…',
+  loginBtn:'Войти →',
+  connecting:'Подключение…',connected:'Подключено',reconnecting:'Переподключение…',
+  connErr:'Ошибка соединения',exit:'Выход',
+  createRoom:'Создать комнату',roomName:'Название…',password:'Пароль (необязательно)',
+  createBtn:'+ Создать комнату',network:'Сеть',host:'Хост 🟢',client:'Клиент',
+  activeRooms:'Активные комнаты',noRooms:'Пока нет комнат.',
+  noRoomsHint:'Создайте первую комнату слева',
+  locked:'С паролем',open:'Открытая',
+  join:'Войти',closeRoom:'Закрыть комнату',leaveRoom:'← Покинуть',
+  admin:'Управление',muteAll:'Выключить все микрофоны',unmuteAll:'Включить все микрофоны',
+  micLabel:'Микрофон',camLabel:'Камера',screenLabel:'Экран',leaveLabel:'Покинуть',
+  muteMic:'Выключить микрофон',unmuteMic:'Включить микрофон',
+  kick:'Удалить из комнаты',ban:'Заблокировать',
+  pwTitle:'Нужен пароль',pwDesc:'Эта комната с паролем. Введите пароль:',
+  pwPlaceholder:'Пароль…',pwCancel:'Отмена',pwEnter:'Войти',
+  errNameEmpty:'Имя не может быть пустым',errNoConn:'Нет соединения',
+  errRoomName:'Введите название комнаты',errPerm:'Не удалось получить доступ к камере/микрофону — разрешите в Системных настройках',
+  errScreenNotSupp:'Демонстрация экрана пока не поддерживается в Linux. Это не ошибка соединения.',
+  errScreenBackend:'Для демонстрации экрана войдите через браузер (эта платформа не поддерживает)',
+  errScreenInUse:'Кто-то уже демонстрирует экран',
+  errCamNotFound:'Камера не найдена',errMicNotFound:'Микрофон не найден',screenActive:'Демонстрация экрана активна',
+  screenFail:'Не удалось начать демонстрацию экрана',
+  joined:' присоединился к комнате',roomClosed:'Комната закрыта',
+  banned:'Вы заблокированы в этой комнате',kicked:'Вы удалены из комнаты',
+  teacherMutedMic:'Учитель выключил ваш микрофон',
+  selfMutedMic:'Ваш микрофон выключен вами — нельзя включить',
+  teacherOpenedMic:'Учитель включил ваш микрофон',
+  allMuted:'Все микрофоны выключены',allOpened:'Микрофоны включены',
+  you:'(Вы)',people:' чел.',screenTile:'Экран',
+},
+en:{
+  loading:'Loading…',
+  langTitle:'Language',
+  loginSub:'Local Network Meeting',
+  role:'Role',student:'Student',teacher:'Teacher',genDefault:'General',
+  fullName:'Full Name',namePlaceholder:'Enter your name…',
+  faculty:'Faculty / Department',facultyPlaceholder:'Enter your faculty…',
+  loginBtn:'Login →',
+  connecting:'Connecting…',connected:'Connected',reconnecting:'Reconnecting…',
+  connErr:'Connection error',exit:'Exit',
+  createRoom:'Create Room',roomName:'Room name…',password:'Password (optional)',
+  createBtn:'+ Create Room',network:'Network',host:'Host 🟢',client:'Client',
+  activeRooms:'Active Rooms',noRooms:'No rooms yet.',
+  noRoomsHint:'Create the first room from the left',
+  locked:'Password',open:'Open',
+  join:'Join',closeRoom:'Close Room',leaveRoom:'← Leave',
+  admin:'Admin',muteAll:'Mute All',unmuteAll:'Unmute All',
+  micLabel:'Microphone',camLabel:'Camera',screenLabel:'Screen',leaveLabel:'Leave',
+  muteMic:'Mute Mic',unmuteMic:'Unmute Mic',
+  kick:'Kick from Room',ban:'Ban',
+  pwTitle:'Password Required',pwDesc:'This room is password protected. Enter the password:',
+  pwPlaceholder:'Password…',pwCancel:'Cancel',pwEnter:'Join',
+  errNameEmpty:'Name cannot be empty',errNoConn:'No connection',
+  errRoomName:'Enter a room name',errPerm:'Camera/Microphone access denied — allow in System Settings',
+  errScreenNotSupp:'Screen sharing is not yet supported on Linux. This is not a connection error.',
+  errScreenBackend:'Join via browser for screen sharing (this platform doesn\'t support it)',
+  errScreenInUse:'Someone is already sharing their screen',
+  errCamNotFound:'Camera not found',errMicNotFound:'Microphone not found',screenActive:'Screen sharing active',
+  screenFail:'Screen sharing failed to start',
+  joined:' joined the room',roomClosed:'Room closed',
+  banned:'You are banned from this room',kicked:'You were removed from the room',
+  teacherMutedMic:'Teacher muted your microphone',
+  selfMutedMic:'Your microphone is muted by you — cannot be unmuted',
+  teacherOpenedMic:'Teacher unmuted your microphone',
+  allMuted:'All microphones muted',allOpened:'Microphones unmuted',
+  you:'(You)',people:' people',screenTile:'Screen',
+},
+};
+
+let _lang=localStorage.getItem('r-offcall-lang')||'en';
+function t(k){ return (I18N[_lang]||I18N.en)[k]||k; }
+function curLang(){ return _lang; }
+
+function setLang(l){
+  _lang=l; localStorage.setItem('r-offcall-lang',l);
+  document.querySelectorAll('.lang-opt').forEach(b=>b.className='lang-opt'+(b.dataset.l===l?' active':''));
+  applyLang();
+  updateLangBtns();
+}
+
+function applyLang(){
+  document.querySelectorAll('[data-lang]').forEach(el=>{
+    const k=el.dataset.lang;
+    if(el.tagName==='INPUT') el.placeholder=t(k); else el.textContent=t(k);
+  });
+  renderRooms(S.get('rooms'));
+  const room=S.get('room');
+  if(room){
+    const cnt=document.getElementById('room-cnt');
+    if(cnt) cnt.textContent=(room.members.length)+t('people');
+  }
+  const ub=document.getElementById('ubadge');
+  if(ub){
+    const r=S.get('user').role;
+    ub.textContent=r==='teacher'?t('teacher'):r==='default'?t('genDefault'):t('student');
+  }
+  const mb=document.getElementById('btn-muteall');
+  if(mb) mb.textContent=S.get('allMuted')?t('unmuteAll'):t('muteAll');
+}
+
+function oLangModal(){
+  document.querySelectorAll('.lang-opt').forEach(b=>b.className='lang-opt'+(b.dataset.l===_lang?' active':''));
+  document.getElementById('lang-modal').classList.add('open');
+}
+function cLangModal(){ document.getElementById('lang-modal').classList.remove('open'); }
+
+const _langFlags={tr:'TR',tk:'TK',ru:'RU',en:'EN'};
+function updateLangBtns(){
+  const lbl=_langFlags[_lang]||'EN';
+  document.querySelectorAll('.lang-btn').forEach(b=>{
+    if(b.id!=='lang-modal') b.innerHTML=ICO.globe+' '+lbl;
+  });
+}
 
 // ════════════════════════════════════════════════════════
 //  STORE
@@ -466,7 +704,7 @@ const S = (() => {
     serverUrl:'http://localhost:7800',
     media:{cam:false,mic:false,screen:false},
     localStream:null, screenStream:null,
-    peers:{}, remoteStreams:{}, micStates:{}, allMuted:false,
+    peers:{}, remoteStreams:{}, micStates:{}, screenStates:{}, allMuted:false,
   };
   const L = {};
   return {
@@ -504,14 +742,6 @@ const Toast={
 // ════════════════════════════════════════════════════════
 let _permissionPreflightStarted=false;
 
-function setPerm(id,state,ok){
-  const row=document.getElementById('perm-'+id);
-  if(!row) return;
-  row.className='perm-row '+(ok===true?'ok':ok===false?'err':'');
-  const s=row.querySelector('.perm-state');
-  if(s) s.textContent=state;
-}
-
 async function preparePermissions(){
   if(_permissionPreflightStarted) return;
   _permissionPreflightStarted=true;
@@ -519,7 +749,6 @@ async function preparePermissions(){
   if(window.pywebview&&window.pywebview.api&&pywebview.api.prepare_permissions){
     try{
       const st=await pywebview.api.prepare_permissions();
-      console.log('[Perm] native status', st);
       if(st&&st.error){
         Toast.show('Native izin hazırlığı başarısız: '+st.error,'err');
       }
@@ -528,62 +757,21 @@ async function preparePermissions(){
     }
   }
 
-  let mediaOk=false;
   try{
-    setPerm('cam','Sistem penceresi bekleniyor...',null);
-    setPerm('mic','Sistem penceresi bekleniyor...',null);
     const stream=await navigator.mediaDevices.getUserMedia({video:true,audio:true});
     S.set('localStream',stream);
     S.upd('media',{cam:stream.getVideoTracks().some(t=>t.enabled),mic:stream.getAudioTracks().some(t=>t.enabled)});
-    setPerm('cam',stream.getVideoTracks().length?'Hazır':'Kamera yok',!!stream.getVideoTracks().length);
-    setPerm('mic',stream.getAudioTracks().length?'Hazır':'Mikrofon yok',!!stream.getAudioTracks().length);
-    mediaOk=true;
   }catch(e){
     try{
       const stream=await navigator.mediaDevices.getUserMedia({audio:true});
       S.set('localStream',stream);
       S.upd('media',{cam:false,mic:true});
-      setPerm('cam','Kamera izni yok veya cihaz yok',false);
-      setPerm('mic','Hazır',true);
-      mediaOk=true;
     }catch(e2){
-      setPerm('cam','Reddedildi',false);
-      setPerm('mic','Reddedildi',false);
-      Toast.show('Kamera/Mikrofon izni alınamadı','err');
+      Toast.show(t('errPerm'),'err');
     }
   }
 
-  // Linux masaustu sürümünde ekran paylaşımı sunulmuyor; izin ekranında
-  // bağlantı ya da hata izlenimi veren bir satır göstermeyelim.
-  const isDesktop=!!(window.pywebview&&window.pywebview.api);
-  const isLinuxDesktop=isDesktop&&S.get('platform')==='Linux';
-  if(isLinuxDesktop){
-    const screenRow=document.getElementById('perm-screen');
-    if(screenRow) screenRow.style.display='none';
-  }
-
-  let desktopShare=false;
-  if(isDesktop){ try{ desktopShare=!!(await window.pywebview.api.screen_share_supported()); }catch(e){} }
-  if(isLinuxDesktop){
-    // Ekran paylaşımı bu masaüstü yolunda bilinçli olarak kapalıdır.
-  }else if(isDesktop&&!desktopShare){
-    setPerm('screen','Masaüstü uygulaması bu backend\'de desteklemiyor — tarayıcıdan katılırsan ekran paylaşabilirsin',null);
-  }else{
-    // getDisplayMedia yalnızca gerçek ekran-paylaşım tıklamasında çağrılır.
-    // Böylece macOS sistem seçicisi kullanıcı hareketiyle açılır.
-    setPerm('screen','Odaya katıldıktan sonra istenir',null);
-  }
-
   _permissionPreflightStarted=false;
-  if(mediaOk) {
-    S.set('screen','login');
-  } else {
-    const skipBtn = document.getElementById('btn-perms-skip');
-    if(skipBtn) skipBtn.style.display = '';
-  }
-}
-
-function skipPermissions(){
   S.set('screen','login');
 }
 
@@ -594,21 +782,20 @@ function skipPermissions(){
 async function initMedia() {
   const existing=S.get('localStream');
   if(existing){
-    attachSelf(existing, S.get('media').cam);
+    const vTracks=existing.getVideoTracks();
+    const aTracks=existing.getAudioTracks();
+    S.upd('media',{cam:vTracks.some(t=>t.enabled),mic:aTracks.some(t=>t.enabled)});
+    attachSelf(existing, vTracks.some(t=>t.enabled));
     return existing;
   }
 
-  // Kamera + Mikrofon birlikte iste — macOS her biri icin ayri popup gosterir
   try {
     const stream = await navigator.mediaDevices.getUserMedia({video:true, audio:true});
     S.set('localStream', stream);
     S.upd('media', {cam:true, mic:true});
     attachSelf(stream, true);
-    console.log('[Media] cam+mic OK');
     return stream;
   } catch(e) {
-    console.warn('[Media] cam+mic failed:', e.name);
-    // Kamera reddedildi/yok — sadece mikrofon dene
     try {
       const stream = await navigator.mediaDevices.getUserMedia({audio:true});
       S.set('localStream', stream);
@@ -617,9 +804,7 @@ async function initMedia() {
       Toast.show('Kamera yok — ses modu aktif');
       return stream;
     } catch(e2) {
-      console.error('[Media] mic failed:', e2.name);
-      // Hic izin yoksa bos stream dondur, kullanici Sistem Ayarlarindan izin vermeli
-      Toast.show('Mikrofon/Kamera erişimi reddedildi — Sistem Ayarları\'ndan izin ver', 'err');
+      Toast.show(t('errPerm'), 'err');
       const empty = new MediaStream();
       S.set('localStream', empty);
       S.upd('media', {cam:false, mic:false});
@@ -632,8 +817,9 @@ function attachSelf(stream, camOn) {
   const tile = document.getElementById('tile-self');
   if(!tile) return;
   const v=tile.querySelector('video'), av=tile.querySelector('.av');
-  if(v){ v.srcObject=stream; v.style.display=camOn?'':'none'; }
-  if(av) av.style.display=camOn?'none':'';
+  const show=camOn||(stream&&stream.getVideoTracks().some(t=>t.enabled));
+  if(v){ v.srcObject=stream; v.style.display=show?'':'none'; }
+  if(av) av.style.display=show?'none':'';
 }
 
 let selfMuted=false;
@@ -642,7 +828,7 @@ function togMic() {
   const stream=S.get('localStream');
   if(!stream) return;
   const tracks=stream.getAudioTracks();
-  if(!tracks.length){ Toast.show('Mikrofon bulunamadı'); return; }
+  if(!tracks.length){ Toast.show(t('errMicNotFound')); return; }
   const on=!S.get('media').mic;
   selfMuted=!on;
   tracks.forEach(t=>t.enabled=on);
@@ -654,7 +840,7 @@ function togCam() {
   const stream=S.get('localStream');
   if(!stream) return;
   const tracks=stream.getVideoTracks();
-  if(!tracks.length){ Toast.show('Kamera bulunamadı'); return; }
+  if(!tracks.length){ Toast.show(t('errCamNotFound')); return; }
   const on=!S.get('media').cam;
   tracks.forEach(t=>t.enabled=on);
   S.upd('media',{cam:on});
@@ -665,20 +851,16 @@ function togCam() {
 async function togScreen() {
   if(S.get('media').screen){ stopScreen(); return; }
   if(window.pywebview&&window.pywebview.api&&S.get('platform')==='Linux'){
-    Toast.show('Linux masaüstü sürümünde ekran paylaşımı henüz desteklenmiyor. Bu bir bağlantı hatası değildir.');
+    Toast.show(t('errScreenNotSupp'));
     return;
   }
-  // Yerleşik masaüstü renderer'larında ekran seçimi yalnızca macOS Qt6 yolunda açıktır.
-  if(window.pywebview&&window.pywebview.api){
-    let ok=true;
-    try{ ok=!!(await window.pywebview.api.screen_share_supported()); }catch(e){ ok=false; }
-    if(!ok){
-      Toast.show('Ekran paylaşımı için tarayıcıdan katılın (bu backend desteklemiyor)','err');
-      return;
-    }
+  const ss=S.get('screenStates');
+  const someoneShares=Object.entries(ss).some(([sid,sharing])=>sharing&&sid!==S.get('user').sid);
+  if(someoneShares){
+    Toast.show(t('errScreenInUse'),'err');
+    return;
   }
   try {
-    // getDisplayMedia — macOS ekran kaydi izni popup'i otomatik gosterir
     const stream = await navigator.mediaDevices.getDisplayMedia({
       video:{cursor:'always'}, audio:false
     });
@@ -688,10 +870,10 @@ async function togScreen() {
     renderGrid();
     await replaceVid(stream.getVideoTracks()[0]);
     emitState();
-    Toast.show('Ekran paylaşımı aktif','ok');
+    Toast.show(t('screenActive'),'ok');
   } catch(e) {
     if(e.name!=='AbortError'&&e.name!=='NotAllowedError')
-      Toast.show('Ekran paylaşımı başlatılamadı','err');
+      Toast.show(t('screenFail'),'err');
   }
 }
 
@@ -732,7 +914,7 @@ function syncCtrls() {
   const bm=document.getElementById('cbtn-mic');
   const bc=document.getElementById('cbtn-cam');
   const bs=document.getElementById('cbtn-screen');
-  if(bm){ bm.className='cbtn '+(m.mic?'on':'off'); bm.textContent=m.mic?'🎤':'🔇'; }
+  if(bm){ bm.className='cbtn '+(m.mic?'on':'off'); bm.innerHTML=m.mic?ICO.mic:ICO.micOff; }
   if(bc){ bc.className='cbtn '+(m.cam?'on':''); }
   if(bs){ bs.className='cbtn '+(m.screen?'scron':''); }
 }
@@ -790,8 +972,7 @@ function dropPeer(sid) {
   if(peers[sid]){ peers[sid].close(); delete peers[sid]; S.set('peers',peers); }
   const streams=S.get('remoteStreams');
   if(streams[sid]){ streams[sid].getTracks().forEach(t=>t.stop()); delete streams[sid]; S.set('remoteStreams',streams); }
-  const t=document.getElementById('tile-'+sid); if(t) t.remove();
-  cntUpdate();
+  renderGrid();
 }
 
 function dropAllPeers() {
@@ -799,6 +980,7 @@ function dropAllPeers() {
   S.set('peers',{});
   Object.values(S.get('remoteStreams')).forEach(s=>s.getTracks().forEach(t=>t.stop()));
   S.set('remoteStreams',{});
+  S.set('micStates',{}); S.set('screenStates',{});
 }
 
 
@@ -808,52 +990,68 @@ function dropAllPeers() {
 function renderGrid() {
   const g=document.getElementById('grid');
   g.innerHTML='';
-  const room=S.get('room'), ss=S.get('screenStream');
-  const members=room?room.members:[];
-
-  if(ss){
-    g.setAttribute('data-c','1'); g.classList.remove('many');
-    g.appendChild(makeScrTile(ss));
+  const room=S.get('room'), members=room?room.members:[];
+  const mySid=S.get('user').sid;
+  const ss=S.get('screenStates'), localScr=S.get('media').screen;
+  let sharerSid=null, scrStream=null;
+  if(localScr){ sharerSid=mySid; scrStream=S.get('screenStream'); }
+  else{ for(const [sid,sh] of Object.entries(ss)){ if(sh){ sharerSid=sid; scrStream=S.get('remoteStreams')[sid]; break; } } }
+  if(sharerSid&&scrStream){
+    g.setAttribute('data-c','1');
+    g.classList.add('scrmode');
+    const st=makeScrTile(scrStream); st.classList.add('scr-main'); g.appendChild(st);
+    const strip=el('div','scr-strip');
+    strip.appendChild(makeSelfTile());
+    members.forEach(m=>{ if(m.sid!==mySid) strip.appendChild(makePeerTile(m)); });
+    g.appendChild(strip);
   } else {
+    g.classList.remove('scrmode');
     const n=members.length;
     g.setAttribute('data-c',Math.min(n,9));
     if(n>9) g.classList.add('many'); else g.classList.remove('many');
     g.appendChild(makeSelfTile());
-    const my=S.get('user').sid;
-    members.forEach(m=>{ if(m.sid!==my) g.appendChild(makePeerTile(m)); });
+    members.forEach(m=>{ if(m.sid!==mySid) g.appendChild(makePeerTile(m)); });
   }
   cntUpdate();
 }
 
 function makeSelfTile(){
   const u=S.get('user'), ls=S.get('localStream'), cam=S.get('media').cam;
-  const t=el('div','tile self'); t.id='tile-self';
+  const hasVid=ls&&ls.getVideoTracks().some(t=>t.enabled);
+  const showCam=cam||hasVid;
+  const tile=el('div','tile self'); tile.id='tile-self';
   const v=el('video'); v.autoplay=true; v.muted=true; v.playsInline=true;
-  if(ls) v.srcObject=ls; v.style.display=cam?'':'none'; t.appendChild(v);
+  if(ls){
+    v.srcObject=ls;
+    setTimeout(()=>v.play().catch(()=>{}), 50);
+  }
+  v.style.display=showCam?'':'none'; tile.appendChild(v);
   const av=el('div','av'); av.textContent=(u.name||'?')[0].toUpperCase();
-  av.style.display=cam?'none':''; t.appendChild(av);
+  av.style.display=showCam?'none':''; tile.appendChild(av);
   const ov=el('div','tover');
-  ov.innerHTML=`<span class="tname">${esc(u.name)} <span style="color:var(--text2)">(Sen)</span></span>
-    <div class="tbadges"><span class="tbadge ${u.role==='teacher'?'tbadge-t':'tbadge-s'}">${esc(u.role==='teacher'?'Öğretmen':u.faculty||'Öğrenci')}</span></div>`;
-  t.appendChild(ov);
-  return t;
+  const roleCls=u.role==='teacher'?'tbadge-t':u.role==='default'?'tbadge-d':'tbadge-s';
+  const roleTxt=u.role==='teacher'?t('teacher'):u.role==='default'?t('genDefault'):u.faculty||t('student');
+  ov.innerHTML=`<span class="tname">${esc(u.name)} <span style="color:var(--text2)">${t('you')}</span></span>
+    <div class="tbadges"><span class="tbadge ${roleCls}">${esc(roleTxt)}</span></div>`;
+  tile.appendChild(ov);
+  return tile;
 }
 
 function makePeerTile(m){
-  const t=el('div','tile'); t.id='tile-'+m.sid; t.dataset.sid=m.sid;
+  const tile=el('div','tile'); tile.id='tile-'+m.sid; tile.dataset.sid=m.sid;
   const stream=S.get('remoteStreams')[m.sid];
   const v=el('video'); v.autoplay=true; v.playsInline=true; v.style.display=stream?'':'none';
-  if(stream) v.srcObject=stream;
-  t.appendChild(v);
-  const av=el('div','av'); av.textContent=(m.name||'?')[0].toUpperCase(); av.style.display=stream?'none':''; t.appendChild(av);
+  if(stream){ v.srcObject=stream; setTimeout(()=>v.play().catch(()=>{}), 50); }
+  tile.appendChild(v);
+  const av=el('div','av'); av.textContent=(m.name||'?')[0].toUpperCase(); av.style.display=stream?'none':''; tile.appendChild(av);
   const ov=el('div','tover');
   const nm=el('span','tname'); nm.textContent=m.name||'?'; ov.appendChild(nm);
   const badges=el('div','tbadges');
-  const roleB=el('span',m.role==='teacher'?'tbadge tbadge-t':'tbadge tbadge-s');
-  roleB.textContent=m.role==='teacher'?'Öğretmen':(m.faculty||'Öğrenci');
+  const roleB=el('span',m.role==='teacher'?'tbadge tbadge-t':m.role==='default'?'tbadge tbadge-d':'tbadge tbadge-s');
+  roleB.textContent=m.role==='teacher'?t('teacher'):m.role==='default'?t('genDefault'):(m.faculty||t('student'));
   badges.appendChild(roleB);
   if(S.get('micStates')[m.sid]===false){
-    const mb=el('span','tbadge tbadge-m'); mb.textContent='🔇'; badges.appendChild(mb);
+    const mb=el('span','tbadge tbadge-m'); mb.innerHTML=ICO.micOff; badges.appendChild(mb);
   }
   const room=S.get('room');
   if(room&&room.owner_sid===S.get('user').sid){
@@ -862,33 +1060,33 @@ function makePeerTile(m){
     b.onclick=e=>{ e.stopPropagation(); togMenu(m.sid); };
     badges.appendChild(b);
     const mn=el('div','tmenu'); mn.id='tmenu-'+m.sid; mn.style.display='none';
-    const mi1=el('button','tmi'); mi1.textContent=on?'Mikrofonu Kapat':'Mikrofonu Aç';
+    const mi1=el('button','tmi'); mi1.innerHTML=(on?ICO.micOff:ICO.mic)+' '+t(on?'muteMic':'unmuteMic');
     mi1.onclick=()=>modMute(m.sid,!on);
-    const mi2=el('button','tmi warn'); mi2.textContent='Odadan At';
+    const mi2=el('button','tmi warn'); mi2.innerHTML=ICO.trash+' '+t('kick');
     mi2.onclick=()=>doKick(m.sid);
-    const mi3=el('button','tmi warn'); mi3.textContent='Engelle';
+    const mi3=el('button','tmi warn'); mi3.innerHTML=ICO.user+' '+t('ban');
     mi3.onclick=()=>modBan(m.sid);
-    mn.append(mi1,mi2,mi3); t.appendChild(mn);
+    mn.append(mi1,mi2,mi3); tile.appendChild(mn);
   }
   ov.appendChild(badges);
-  t.appendChild(ov);
-  return t;
+  tile.appendChild(ov);
+  return tile;
 }
 
 function makeScrTile(stream){
   const u=S.get('user');
-  const t=el('div','tile scrtile'); t.id='tile-scr';
-  const v=el('video'); v.autoplay=true; v.muted=true; v.playsInline=true; v.srcObject=stream; t.appendChild(v);
+  const tile=el('div','tile scrtile'); tile.id='tile-scr';
+  const v=el('video'); v.autoplay=true; v.muted=true; v.playsInline=true; v.srcObject=stream; tile.appendChild(v);
   const ov=el('div','tover');
-  ov.innerHTML=`<span class="tname">🖥️ ${esc(u.name)} — Ekran</span>`;
-  t.appendChild(ov);
-  return t;
+  ov.innerHTML=`<span class="tname">${ICO.screen} ${esc(u.name)} — ${t('screenTile')}</span>`;
+  tile.appendChild(ov);
+  return tile;
 }
 
 function cntUpdate(){
   const room=S.get('room');
   const el2=document.getElementById('room-cnt');
-  if(el2) el2.textContent=(room?room.members.length:0)+' kişi';
+  if(el2) el2.textContent=(room?room.members.length:0)+' '+t('people');
 }
 
 
@@ -898,7 +1096,7 @@ function cntUpdate(){
 function renderRooms(rooms){
   const c=document.getElementById('rooms-list');
   if(!rooms||!rooms.length){
-    c.innerHTML='<div class="empty">Henüz oda yok.<br>Sol taraftan ilk odayı sen oluştur 🚀</div>';
+    c.innerHTML='<div class="empty">'+t('noRooms')+'<br>'+t('noRoomsHint')+'</div>';
     return;
   }
   c.innerHTML='';
@@ -911,14 +1109,14 @@ function renderRooms(rooms){
       <div class="rc-left">
         <div class="rc-name">${esc(r.name)}</div>
         <div class="rc-meta">
-          <span>${r.locked?'🔒 Şifreli':'🌐 Açık'}</span>
+          <span>${r.locked?ICO.lock+' ':''}${t(r.locked?'locked':'open')}</span>
           <span class="dot"></span>
-          <span>${r.member_count} kişi</span>
+          <span>${r.member_count} ${t('people')}</span>
           <span class="dot"></span>
           <span>${esc(names)}${more}</span>
         </div>
       </div>
-      <button class="btn-join">Katıl</button>`;
+      <button class="btn-join">${t('join')}</button>`;
     c.appendChild(card);
   });
 }
@@ -931,29 +1129,30 @@ function selRole(r){
   S.upd('user',{role:r});
   document.getElementById('rbtn-s').className='role-btn'+(r==='student'?' active':'');
   document.getElementById('rbtn-t').className='role-btn'+(r==='teacher'?' active':'');
+  document.getElementById('rbtn-d').className='role-btn'+(r==='default'?' active':'');
   document.getElementById('fld-faculty').style.display=r==='student'?'':'none';
 }
 
 async function doLogin(){
   const name=document.getElementById('inp-name').value.trim();
-  if(!name){ Toast.show('Ad Soyad boş olamaz'); return; }
+  if(!name){ Toast.show(t('errNameEmpty')); return; }
   const role=S.get('user').role;
   const faculty=role==='student'?document.getElementById('inp-faculty').value.trim():'';
   S.upd('user',{name,faculty});
   document.getElementById('uav').textContent=name[0].toUpperCase();
   document.getElementById('uname').textContent=name;
   const b=document.getElementById('ubadge');
-  b.textContent=role==='teacher'?'Öğretmen':'Öğrenci';
-  b.className='badge '+(role==='teacher'?'badge-t':'badge-s');
+  b.textContent=role==='teacher'?t('teacher'):role==='default'?t('genDefault'):t('student');
+  b.className='badge '+(role==='teacher'?'badge-t':role==='default'?'badge-d':'badge-s');
   await ensureSocket();
   const u=S.get('user');
   sock().emit('register_user',{name:u.name,role:u.role,faculty:u.faculty});
 }
 
 function doCreate(){
-  if(!sock()||!sock().connected){ Toast.show('Bağlantı yok','err'); return; }
+  if(!sock()||!sock().connected){ Toast.show(t('errNoConn'),'err'); return; }
   const name=document.getElementById('inp-rname').value.trim();
-  if(!name){ Toast.show('Oda adı girin'); return; }
+  if(!name){ Toast.show(t('errRoomName')); return; }
   const pass=document.getElementById('inp-rpass').value.trim();
   sock().emit('create_room',{room_name:name,password:pass||''});
   document.getElementById('inp-rname').value='';
@@ -962,10 +1161,10 @@ function doCreate(){
 
 let _pjoin=null;
 function joinRoom(rid,locked){
-  if(!sock()||!sock().connected){ Toast.show('Bağlantı yok','err'); return; }
+  if(!sock()||!sock().connected){ Toast.show(t('errNoConn'),'err'); return; }
   if(locked){
     _pjoin=rid;
-    mopen('Şifre Gerekli','Bu oda şifreli. Şifreyi girin:',()=>{
+    mopen(t('pwTitle'),t('pwDesc'),()=>{
       sock().emit('join_room',{room_id:_pjoin,password:document.getElementById('minp').value});
       mclose();
     });
@@ -1011,8 +1210,8 @@ function doMuteAll(){
   const muted=!S.get('allMuted'); S.set('allMuted',muted);
   sock().emit('set_force_mute',{room_id:room.id,muted});
   const b=document.getElementById('btn-muteall');
-  if(b) b.textContent=muted?'🔊 Hepsini Aç':'🔇 Hepsini Sustur';
-  Toast.show(muted?'Tüm mikrofonlar kapatıldı':'Mikrofonlar açıldı');
+  if(b) b.innerHTML=(muted?ICO.volumeX:ICO.volume)+' '+t(muted?'unmuteAll':'muteAll');
+  Toast.show(muted?t('allMuted'):t('allOpened'));
 }
 
 function modMute(sid,muted){
@@ -1048,7 +1247,7 @@ function doExit(){
 
 function cleanup(){
   dropAllPeers(); stopAllMedia();
-  S.set('room',null); S.set('allMuted',false); S.set('micStates',{});
+  S.set('room',null); S.set('allMuted',false); S.set('micStates',{}); S.set('screenStates',{});
   selfMuted=false;
   document.getElementById('grid').innerHTML='';
   document.getElementById('tbar').classList.remove('show');
@@ -1094,15 +1293,15 @@ function ensureSocket(){
 
     _sk.on('connect',()=>{
       _skReady=true;
-      dot.className='conn-dot ok'; lbl.textContent='Bağlandı';
+      dot.className='conn-dot ok'; lbl.textContent=t('connected');
       res();
     });
     _sk.on('disconnect',()=>{
       _skReady=false;
-      dot.className='conn-dot wait'; lbl.textContent='Yeniden bağlanıyor…';
+      dot.className='conn-dot wait'; lbl.textContent=t('reconnecting');
     });
     _sk.on('connect_error',()=>{
-      dot.className='conn-dot'; lbl.textContent='Bağlantı hatası';
+      dot.className='conn-dot'; lbl.textContent=t('connErr');
     });
 
     _sk.on('registered',data=>{
@@ -1111,7 +1310,7 @@ function ensureSocket(){
       _sk.emit('get_rooms',{});
       if(window.pywebview){
         pywebview.api.get_local_ip().then(ip=>{ document.getElementById('net-ip').textContent=ip; }).catch(()=>{});
-        pywebview.api.get_is_host().then(h=>{ document.getElementById('net-role').textContent=h?'Host 🟢':'İstemci'; }).catch(()=>{});
+        pywebview.api.get_is_host().then(h=>{ document.getElementById('net-role').textContent=h?t('host'):t('client'); }).catch(()=>{});
       }
     });
 
@@ -1124,7 +1323,7 @@ function ensureSocket(){
       room.members=room.members.filter(m=>m.sid!==data.user.sid);
       room.members.push(data.user); S.set('room',room);
       renderGrid();
-      Toast.show(data.user.name+' odaya katıldı','ok');
+      Toast.show(data.user.name+t('joined'),'ok');
       makePeer(data.user.sid,false);
       cntUpdate();
     });
@@ -1134,17 +1333,18 @@ function ensureSocket(){
       room.members=room.members.filter(m=>m.sid!==data.sid);
       S.set('room',room);
       const ms=S.get('micStates'); delete ms[data.sid]; S.set('micStates',ms);
+      const ss=S.get('screenStates'); delete ss[data.sid]; S.set('screenStates',ss);
       dropPeer(data.sid);
       renderGrid();
     });
 
     _sk.on('room_closed',data=>{
       const room=S.get('room');
-      if(room&&room.id===data.room_id){ Toast.show('Oda kapatıldı','err'); cleanup(); }
+      if(room&&room.id===data.room_id){ Toast.show(t('roomClosed'),'err'); cleanup(); }
     });
 
     _sk.on('kicked',data=>{
-      Toast.show(data.reason==='banned'?'Bu odadan engellendiniz':'Odadan çıkarıldınız','err');
+      Toast.show(data.reason==='banned'?t('banned'):t('kicked'),'err');
       cleanup();
     });
 
@@ -1155,26 +1355,28 @@ function ensureSocket(){
       if(muted){
         ls.getAudioTracks().forEach(t=>t.enabled=false);
         S.upd('media',{mic:false});
-        Toast.show('Öğretmen mikrofonunuzu kapattı');
+        Toast.show(t('teacherMutedMic'));
       }else{
         if(selfMuted){
-          Toast.show('Mikrofonunuz kendiniz kapalı — açılamaz','err');
+          Toast.show(t('selfMutedMic'),'err');
           return;
         }
         ls.getAudioTracks().forEach(t=>t.enabled=true);
         S.upd('media',{mic:true});
-        Toast.show('Öğretmen mikrofonunuzu açtı');
+        Toast.show(t('teacherOpenedMic'));
       }
     });
 
     _sk.on('peer_media_state',data=>{
       const ms=S.get('micStates'); ms[data.sid]=data.mic; S.set('micStates',ms);
+      const ss=S.get('screenStates'); ss[data.sid]=data.screen; S.set('screenStates',ss);
       const tile=document.getElementById('tile-'+data.sid); if(!tile) return;
       const badges=tile.querySelector('.tbadges'); if(!badges) return;
       let mb=tile.querySelector('.tbadge-m');
       if(!data.mic){
-        if(!mb){ mb=document.createElement('span'); mb.className='tbadge tbadge-m'; mb.textContent='🔇'; badges.appendChild(mb); }
+        if(!mb){ mb=document.createElement('span'); mb.className='tbadge tbadge-m'; mb.innerHTML=ICO.micOff; badges.appendChild(mb); }
       } else if(mb){ mb.remove(); }
+      renderGrid();
     });
 
     _sk.on('webrtc_offer',async data=>{
@@ -1197,7 +1399,7 @@ function ensureSocket(){
       if(pc&&data.candidate) try{ await pc.addIceCandidate(new RTCIceCandidate(data.candidate)); }catch(e){}
     });
 
-    _sk.on('error',data=>Toast.show(data.msg||'Hata','err'));
+    _sk.on('error',data=>Toast.show(data.msg||t('errNoConn'),'err'));
   });
 }
 
@@ -1207,6 +1409,23 @@ function ensureSocket(){
 // ════════════════════════════════════════════════════════
 function el(tag,cls){ const e=document.createElement(tag); if(cls) e.className=cls; return e; }
 function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+const ICO={
+  globe:'<span class="ico ico-globe"></span>',
+  student:'<span class="ico ico-student"></span>',
+  teacher:'<span class="ico ico-teacher"></span>',
+  user:'<span class="ico ico-user"></span>',
+  lock:'<span class="ico ico-lock"></span>',
+  unlock:'<span class="ico ico-unlock"></span>',
+  mic:'<span class="ico ico-mic"></span>',
+  micOff:'<span class="ico ico-mic-off"></span>',
+  cam:'<span class="ico ico-cam"></span>',
+  screen:'<span class="ico ico-screen"></span>',
+  trash:'<span class="ico ico-trash"></span>',
+  volume:'<span class="ico ico-volume"></span>',
+  volumeX:'<span class="ico ico-volume-x"></span>',
+  gear:'<span class="ico ico-gear"></span>',
+};
 
 
 // ════════════════════════════════════════════════════════
@@ -1232,7 +1451,8 @@ window.addEventListener('DOMContentLoaded',async()=>{
   document.getElementById('inp-name').addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
   document.getElementById('inp-faculty').addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
 
-  console.log('[App] ready, server:', S.get('serverUrl'));
+  applyLang();
+  updateLangBtns();
   setTimeout(()=>preparePermissions(), 500);
 });
 </script>

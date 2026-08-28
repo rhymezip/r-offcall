@@ -138,14 +138,8 @@ def _start_server(bind_host="0.0.0.0", port=PORT):
 
 # ── Window events ────────────────────────────────────────────────
 def _screen_capture_supported() -> bool:
-    """Screen sharing is enabled only in the macOS Qt6 desktop renderer."""
-    if platform.system() != "Darwin" or _gui != "qt":
-        return False
-    try:
-        import webview.platforms.qt as qtmod
-        return bool(getattr(qtmod, "_qt6", False))
-    except Exception:
-        return False
+    """Screen sharing via getDisplayMedia is supported on macOS (WKWebView or Qt)."""
+    return platform.system() == "Darwin"
 
 
 def _select_desktop_media(req):
@@ -175,8 +169,8 @@ def _select_desktop_media(req):
 
 
 def _hook_desktop_media():
-    """Connect Qt 6's desktop-media signal after the page has loaded."""
-    if not _screen_capture_supported():
+    """Connect Qt 6's desktop-media signal after the page has loaded (Qt only)."""
+    if not _screen_capture_supported() or _gui != "qt":
         return
 
     try:
