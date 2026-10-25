@@ -124,7 +124,7 @@ async def get_rooms(sid, data=None):
 @sio.event
 async def create_room(sid, data):
     if sid not in users:
-        await sio.emit("error", {"msg": "Önce giriş yapın."}, to=sid)
+        await sio.emit("error", {"code": "errLoginFirst", "msg": "Önce giriş yapın."}, to=sid)
         return
     rid = str(uuid.uuid4())[:8]
     room_name = (data.get("room_name") or "Oda")[:60]
@@ -145,18 +145,18 @@ async def create_room(sid, data):
 @sio.event
 async def join_room(sid, data):
     if sid not in users:
-        await sio.emit("error", {"msg": "Önce giriş yapın."}, to=sid)
+        await sio.emit("error", {"code": "errLoginFirst", "msg": "Önce giriş yapın."}, to=sid)
         return
     rid = data.get("room_id")
     if rid not in rooms:
-        await sio.emit("error", {"msg": "Oda bulunamadı."}, to=sid)
+        await sio.emit("error", {"code": "errRoomNotFound", "msg": "Oda bulunamadı."}, to=sid)
         return
     room = rooms[rid]
     if room["password"] and room["password"] != data.get("password", ""):
-        await sio.emit("error", {"msg": "Yanlış şifre."}, to=sid)
+        await sio.emit("error", {"code": "errWrongPassword", "msg": "Yanlış şifre."}, to=sid)
         return
     if _is_banned(room, users[sid]):
-        await sio.emit("error", {"msg": "Bu odadan engellendiniz."}, to=sid)
+        await sio.emit("error", {"code": "banned", "msg": "Bu odadan engellendiniz."}, to=sid)
         return
     room["members"][sid] = users[sid]
     await sio.enter_room(sid, rid)
@@ -186,7 +186,7 @@ async def close_room(sid, data):
     if rid not in rooms:
         return
     if rooms[rid]["owner_sid"] != sid:
-        await sio.emit("error", {"msg": "Sadece oda sahibi kapatabilir."}, to=sid)
+        await sio.emit("error", {"code": "errCloseOwner", "msg": "Sadece oda sahibi kapatabilir."}, to=sid)
         return
     del rooms[rid]
     await sio.emit("room_closed", {"room_id": rid}, room=rid)

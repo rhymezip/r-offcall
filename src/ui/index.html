@@ -325,7 +325,8 @@ html,body{height:100%;width:100%;background:var(--bg);color:var(--text);
   background:var(--bg3);border:1px solid var(--border2);
   border-radius:9px;padding:10px 18px;font-size:13px;
   opacity:0;transition:opacity .2s,transform .2s;
-  pointer-events:none;z-index:999;white-space:nowrap;max-width:92vw;text-align:center
+  pointer-events:none;z-index:999;white-space:normal;width:max-content;max-width:92vw;
+  overflow-wrap:anywhere;text-align:center
 }
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 #toast.ok{border-color:#14532d88;color:var(--green)}
@@ -482,7 +483,7 @@ html,body{height:100%;width:100%;background:var(--bg);color:var(--text);
       <button class="lang-opt" data-l="en" onclick="setLang('en')">English</button>
     </div>
     <div class="modal-btns">
-      <button class="btn-ok" onclick="cLangModal()">Tamam</button>
+      <button class="btn-ok" onclick="cLangModal()" data-lang="done">Done</button>
     </div>
   </div>
 </div>
@@ -498,6 +499,11 @@ html,body{height:100%;width:100%;background:var(--bg);color:var(--text);
 // ════════════════════════════════════════════════════════
 const I18N={
 tr:{
+  done:'Tamam',audioOnly:'Kamera yok — yalnızca ses modu etkin',
+  errNativePerm:'Cihaz izinleri hazırlanamadı. Sistem ayarlarını kontrol edin.',
+  errLoginFirst:'Önce giriş yapın.',errRoomNotFound:'Oda bulunamadı.',
+  errWrongPassword:'Yanlış şifre.',errCloseOwner:'Odayı yalnızca sahibi kapatabilir.',
+  errServer:'İşlem tamamlanamadı. Lütfen yeniden deneyin.',
   loading:'Yükleniyor…',
   langTitle:'Dil Seçimi',
   loginSub:'Yerel Ağ Toplantısı',
@@ -529,51 +535,61 @@ tr:{
   screenFail:'Ekran paylaşımı başlatılamadı',
   joined:' odaya katıldı',roomClosed:'Oda kapatıldı',
   banned:'Bu odadan engellendiniz',kicked:'Odadan çıkarıldınız',
-  teacherMutedMic:'Öğretmen mikrofonunuzu kapattı',
-  selfMutedMic:'Mikrofonunuz kendiniz kapalı — açılamaz',
-  teacherOpenedMic:'Öğretmen mikrofonunuzu açtı',
+  teacherMutedMic:'Oda yöneticisi mikrofonunuzu kapattı',
+  selfMutedMic:'Mikrofonunuzu siz kapattınız. Yalnızca siz açabilirsiniz.',
+  teacherOpenedMic:'Oda yöneticisi mikrofonunuzu açtı',
   allMuted:'Tüm mikrofonlar kapatıldı',allOpened:'Mikrofonlar açıldı',
   you:'(Sen)',people:' kişi',screenTile:'Ekran',
 },
 tk:{
-  loading:'Ugryzýar…',
-  langTitle:'Dil Saýlawy',
-  loginSub:'Ýerel Senagat Toplantysy',
-  role:'Rol',student:'Okuwçy',teacher:'Uqretel',genDefault:'Umumy',
-  fullName:'Ady Familiýa',namePlaceholder:'Adyňyzy giriziň…',
-  faculty:'Fakulter / Bölümi',facultyPlaceholder:'Fakultiýeni giriziň…',
-  loginBtn:'Içeri Giriň →',
-  connecting:'Baglanyár…',connected:'Baglandy',reconnecting:'Täzeden baglanyár…',
-  connErr:'Baglanyşyk syzygy',exit:'Çykyş',
-  createRoom:'Ota Dörediň',roomName:'Ota ady…',password:'Gizlin sifre (opsional)',
-  createBtn:'+ Ota Dörediň',network:'Aýlyşyk',host:'Host 🟢',client:'Istemiçi',
-  activeRooms:'Işje Ota',noRooms:'Häzir ota ýok.',
-  noRoomsHint:'Soly ýerden ilki ota dörediň',
-  locked:'Sifreli',open:'Açyk',
-  join:'Giriň',closeRoom:'Otany Ýatyr',leaveRoom:'← Ayryl',
-  admin:'Dolandyryjy',muteAll:'Hepsini Ýatyr',unmuteAll:'Hepsini Aç',
-  micLabel:'Mikrofon',camLabel:'Kamera',screenLabel:'Ekran',leaveLabel:'Ayryl',
-  muteMic:'Mikrofony Ýatyr',unmuteMic:'Mikrofony Aç',
-  kick:'Otadan Çykar',ban:'Blokla',
-  pwTitle:'Sifre Gerekli',pwDesc:'Bu ota sifreli. Sifreni giriziň:',
-  pwPlaceholder:'Sifre…',pwCancel:'Ýokar',pwEnter:'Gir',
-  errNameEmpty:'Ady Familiýa bolup bilmeýär',errNoConn:'Baglanyşyk ýok',
-  errRoomName:'Ota ady giriziň',errPerm:'Kamera/Mikrofon rugsat alnamady — Sazlamalardan rugsat bermeli',
-  errScreenNotSupp:'Linux desctopynda ekran paýlaşygy häzir döredilmeýär. Bu baglanyşyk syzygy däl.',
-  errScreenBackend:'Ekran paýlaşygy üçin brauzerdan giriň (bu platforma goldawaýar)',
-  errScreenPerm:'macOS sazlamalarynda ekran ýazgysyna rugsat beriň, soň programmany täzeden açyň.',
-  errScreenInUse:'Başga biri ekran paýlaşýar',
-  errCamNotFound:'Kamera taplamady',errMicNotFound:'Mikrofon taplamady',screenActive:'Ekran paýlaşygy işledi',
-  screenFail:'Ekran paýlaşygy başladylamady',
-  joined:' otana girdi',roomClosed:'Ota gapyldy',
-  banned:'Bu otadan bloklanedyňiz',kicked:'Otadan çykaryldyňyz',
-  teacherMutedMic:'Uqretel mikrofonyňyzy ýattyrdy',
-  selfMutedMic:'Mikrofonyňyz özüňizde ýatydy — açylmypdyr',
-  teacherOpenedMic:'Uqretel mikrofonyňyzy açdy',
-  allMuted:'Ähli mikrofonlar ýatdyryldy',allOpened:'Mikrofonlar açyldy',
+  done:'Bolýar',audioOnly:'Kamera ýok — diňe ses arkaly aragatnaşyk işjeň',
+  errNativePerm:'Enjamyň rugsatlaryny taýýarlamak başartmady. Ulgam sazlamalaryny barlaň.',
+  errLoginFirst:'Ilki ulgama giriň.',errRoomNotFound:'Otag tapylmady.',
+  errWrongPassword:'Parol nädogry.',errCloseOwner:'Otagy diňe ony döreden ulanyjy ýapyp biler.',
+  errServer:'Amaly ýerine ýetirmek başartmady. Täzeden synanyşyň.',
+  loading:'Ýüklenýär…',
+  langTitle:'Dil saýlawy',
+  loginSub:'Ýerli torda wideoaragatnaşyk',
+  role:'Görnüş',student:'Talyp',teacher:'Mugallym',genDefault:'Umumy',
+  fullName:'Ady we familiýasy',namePlaceholder:'Adyňyzy we familiýaňyzy giriziň…',
+  faculty:'Fakultet / bölüm',facultyPlaceholder:'Fakultetiňizi giriziň…',
+  loginBtn:'Içeri gir →',
+  connecting:'Birikdirilýär…',connected:'Birikdirildi',reconnecting:'Täzeden birikdirilýär…',
+  connErr:'Baglanyşyk ýalňyşlygy',exit:'Çykyş',
+  createRoom:'Otag döretmek',roomName:'Otagyň ady…',password:'Parol (hökmany däl)',
+  createBtn:'+ Otag döret',network:'Tor',host:'Serwer 🟢',client:'Müşderi',
+  activeRooms:'Işjeň otaglar',noRooms:'Entek otag ýok.',
+  noRoomsHint:'Çep tarapdan ilkinji otagy dörediň',
+  locked:'Parolly',open:'Açyk',
+  join:'Goşul',closeRoom:'Otagy ýap',leaveRoom:'← Çyk',
+  admin:'Dolandyryjy',muteAll:'Ähli mikrofonlary öçür',unmuteAll:'Ähli mikrofonlary aç',
+  micLabel:'Mikrofon',camLabel:'Kamera',screenLabel:'Ekran',leaveLabel:'Çyk',
+  muteMic:'Mikrofony öçür',unmuteMic:'Mikrofony aç',
+  kick:'Otagdan çykar',ban:'Girişi gadagan et',
+  pwTitle:'Parol gerek',pwDesc:'Bu otag parol bilen goralan. Paroly giriziň:',
+  pwPlaceholder:'Parol…',pwCancel:'Ýatyr',pwEnter:'Gir',
+  errNameEmpty:'Adyňyzy we familiýaňyzy giriziň',errNoConn:'Baglanyşyk ýok',
+  errRoomName:'Otagyň adyny giriziň',errPerm:'Kamera ýa-da mikrofon üçin rugsat alynmady. Ulgam sazlamalarynda rugsat beriň.',
+  errScreenNotSupp:'Linux üçin iş stoly programmasynda ekran paýlaşmak entek goldanylmaýar. Bu baglanyşyk ýalňyşlygy däl.',
+  errScreenBackend:'Ekrany paýlaşmak üçin brauzer arkaly giriň. Programmanyň bu görnüşi ekran paýlaşmagy goldamaýar.',
+  errScreenPerm:'macOS sazlamalarynda ekrany ýazga almaga rugsat beriň, soňra programmany täzeden açyň.',
+  errScreenInUse:'Başga bir gatnaşyjy eýýäm ekranyny paýlaşýar',
+  errCamNotFound:'Kamera tapylmady',errMicNotFound:'Mikrofon tapylmady',screenActive:'Ekran paýlaşylýar',
+  screenFail:'Ekran paýlaşygyny başlatmak başartmady',
+  joined:' otaga goşuldy',roomClosed:'Otag ýapyldy',
+  banned:'Bu otaga girmegiňiz gadagan edildi',kicked:'Siz otagdan çykaryldyňyz',
+  teacherMutedMic:'Otagyň dolandyryjysy mikrofonyňyzy öçürdi',
+  selfMutedMic:'Mikrofony özüňiz öçürdiňiz. Ony diňe özüňiz açyp bilersiňiz.',
+  teacherOpenedMic:'Otagyň dolandyryjysy mikrofonyňyzy açdy',
+  allMuted:'Ähli mikrofonlar öçürildi',allOpened:'Ähli mikrofonlar açyldy',
   you:'(Siz)',people:' adam',screenTile:'Ekran',
 },
 ru:{
+  done:'Готово',audioOnly:'Камера недоступна — включён режим только со звуком',
+  errNativePerm:'Не удалось подготовить разрешения устройства. Проверьте системные настройки.',
+  errLoginFirst:'Сначала войдите.',errRoomNotFound:'Комната не найдена.',
+  errWrongPassword:'Неверный пароль.',errCloseOwner:'Закрыть комнату может только её создатель.',
+  errServer:'Не удалось выполнить действие. Попробуйте ещё раз.',
   loading:'Загрузка…',
   langTitle:'Выбор языка',
   loginSub:'Локальная сеть',
@@ -605,13 +621,18 @@ ru:{
   screenFail:'Не удалось начать демонстрацию экрана',
   joined:' присоединился к комнате',roomClosed:'Комната закрыта',
   banned:'Вы заблокированы в этой комнате',kicked:'Вы удалены из комнаты',
-  teacherMutedMic:'Учитель выключил ваш микрофон',
-  selfMutedMic:'Ваш микрофон выключен вами — нельзя включить',
-  teacherOpenedMic:'Учитель включил ваш микрофон',
+  teacherMutedMic:'Администратор комнаты выключил ваш микрофон',
+  selfMutedMic:'Вы сами выключили микрофон. Включить его можете только вы.',
+  teacherOpenedMic:'Администратор комнаты включил ваш микрофон',
   allMuted:'Все микрофоны выключены',allOpened:'Микрофоны включены',
   you:'(Вы)',people:' чел.',screenTile:'Экран',
 },
 en:{
+  done:'Done',audioOnly:'No camera — audio-only mode is active',
+  errNativePerm:'Could not prepare device permissions. Check system settings.',
+  errLoginFirst:'Please log in first.',errRoomNotFound:'Room not found.',
+  errWrongPassword:'Incorrect password.',errCloseOwner:'Only the room creator can close it.',
+  errServer:'Could not complete the action. Please try again.',
   loading:'Loading…',
   langTitle:'Language',
   loginSub:'Local Network Meeting',
@@ -643,9 +664,9 @@ en:{
   screenFail:'Screen sharing failed to start',
   joined:' joined the room',roomClosed:'Room closed',
   banned:'You are banned from this room',kicked:'You were removed from the room',
-  teacherMutedMic:'Teacher muted your microphone',
-  selfMutedMic:'Your microphone is muted by you — cannot be unmuted',
-  teacherOpenedMic:'Teacher unmuted your microphone',
+  teacherMutedMic:'The room admin muted your microphone',
+  selfMutedMic:'You muted your microphone. Only you can unmute it.',
+  teacherOpenedMic:'The room admin unmuted your microphone',
   allMuted:'All microphones muted',allOpened:'Microphones unmuted',
   you:'(You)',people:' people',screenTile:'Screen',
 },
@@ -655,6 +676,17 @@ let _lang=localStorage.getItem('r-offcall-lang')||'en';
 function t(k){ return (I18N[_lang]||I18N.en)[k]||k; }
 function curLang(){ return _lang; }
 
+function serverErrorText(data){
+  // Recognize older hosts too; their protocol returned Turkish text only.
+  const legacy={
+    'Önce giriş yapın.':'errLoginFirst','Oda bulunamadı.':'errRoomNotFound',
+    'Yanlış şifre.':'errWrongPassword','Bu odadan engellendiniz.':'banned',
+    'Sadece oda sahibi kapatabilir.':'errCloseOwner',
+  };
+  const key=data&&(data.code||legacy[data.msg]);
+  return key&&Object.prototype.hasOwnProperty.call(I18N.en,key)?t(key):t('errServer');
+}
+
 function setLang(l){
   _lang=l; localStorage.setItem('r-offcall-lang',l);
   document.querySelectorAll('.lang-opt').forEach(b=>b.className='lang-opt'+(b.dataset.l===l?' active':''));
@@ -663,6 +695,7 @@ function setLang(l){
 }
 
 function applyLang(){
+  document.documentElement.lang=_lang;
   document.querySelectorAll('[data-lang]').forEach(el=>{
     const k=el.dataset.lang;
     if(el.tagName==='INPUT') el.placeholder=t(k); else el.textContent=t(k);
@@ -672,6 +705,7 @@ function applyLang(){
   if(room){
     const cnt=document.getElementById('room-cnt');
     if(cnt) cnt.textContent=(room.members.length)+t('people');
+    renderGrid();
   }
   const ub=document.getElementById('ubadge');
   if(ub){
@@ -754,7 +788,8 @@ async function preparePermissions(){
     try{
       const st=await pywebview.api.prepare_permissions();
       if(st&&st.error){
-        Toast.show('Native izin hazırlığı başarısız: '+st.error,'err');
+        console.warn('[Perm] native prepare failed',st.error);
+        Toast.show(t('errNativePerm'),'err');
       }
     }catch(e){
       console.warn('[Perm] native prepare failed', e);
@@ -805,7 +840,7 @@ async function initMedia() {
       S.set('localStream', stream);
       S.upd('media', {cam:false, mic:true});
       attachSelf(stream, false);
-      Toast.show('Kamera yok — ses modu aktif');
+      Toast.show(t('audioOnly'));
       return stream;
     } catch(e2) {
       Toast.show(t('errPerm'), 'err');
@@ -1141,7 +1176,7 @@ function makeScrTile(stream,sharer){
 function cntUpdate(){
   const room=S.get('room');
   const el2=document.getElementById('room-cnt');
-  if(el2) el2.textContent=(room?room.members.length:0)+' '+t('people');
+  if(el2) el2.textContent=(room?room.members.length:0)+t('people');
 }
 
 
@@ -1166,7 +1201,7 @@ function renderRooms(rooms){
         <div class="rc-meta">
           <span>${r.locked?ICO.lock+' ':''}${t(r.locked?'locked':'open')}</span>
           <span class="dot"></span>
-          <span>${r.member_count} ${t('people')}</span>
+          <span>${r.member_count}${t('people')}</span>
           <span class="dot"></span>
           <span>${esc(names)}${more}</span>
         </div>
@@ -1348,15 +1383,15 @@ function ensureSocket(){
 
     _sk.on('connect',()=>{
       _skReady=true;
-      dot.className='conn-dot ok'; lbl.textContent=t('connected');
+      dot.className='conn-dot ok'; lbl.dataset.lang='connected'; lbl.textContent=t('connected');
       res();
     });
     _sk.on('disconnect',()=>{
       _skReady=false;
-      dot.className='conn-dot wait'; lbl.textContent=t('reconnecting');
+      dot.className='conn-dot wait'; lbl.dataset.lang='reconnecting'; lbl.textContent=t('reconnecting');
     });
     _sk.on('connect_error',()=>{
-      dot.className='conn-dot'; lbl.textContent=t('connErr');
+      dot.className='conn-dot'; lbl.dataset.lang='connErr'; lbl.textContent=t('connErr');
     });
 
     _sk.on('registered',data=>{
@@ -1365,7 +1400,10 @@ function ensureSocket(){
       _sk.emit('get_rooms',{});
       if(window.pywebview){
         pywebview.api.get_local_ip().then(ip=>{ document.getElementById('net-ip').textContent=ip; }).catch(()=>{});
-        pywebview.api.get_is_host().then(h=>{ document.getElementById('net-role').textContent=h?t('host'):t('client'); }).catch(()=>{});
+        pywebview.api.get_is_host().then(h=>{
+          const label=document.getElementById('net-role');
+          label.dataset.lang=h?'host':'client';label.textContent=t(label.dataset.lang);
+        }).catch(()=>{});
       }
     });
 
@@ -1451,7 +1489,7 @@ function ensureSocket(){
       if(pc&&data.candidate) try{ await pc.addIceCandidate(new RTCIceCandidate(data.candidate)); }catch(e){}
     });
 
-    _sk.on('error',data=>Toast.show(data.msg||t('errNoConn'),'err'));
+    _sk.on('error',data=>Toast.show(serverErrorText(data),'err'));
   });
 }
 
