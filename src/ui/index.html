@@ -1438,7 +1438,7 @@ async function waitPywebview(){
     }
     await new Promise(r=>setTimeout(r,100));
   }
-  return 'http://localhost:7800';
+  return window.pywebview ? 'http://localhost:7800' : window.location.origin;
 }
 
 window.addEventListener('DOMContentLoaded',async()=>{
