@@ -523,6 +523,7 @@ tr:{
   errRoomName:'Oda adı girin',errPerm:'Kamera/Mikrofon izni alınamadı — Sistem Ayarları\'ndan izin ver',
   errScreenNotSupp:'Linux masaüstü sürümünde ekran paylaşımı henüz desteklenmiyor. Bu bir bağlantı hatası değildir.',
   errScreenBackend:'Ekran paylaşımı için tarayıcıdan katılın (bu backend desteklemiyor)',
+  errScreenPerm:'macOS Ekran Kaydı iznini tamamlayın, ardından uygulamayı yeniden açın.',
   errScreenInUse:'Başka biri zaten ekran paylaşıyor',
   errCamNotFound:'Kamera bulunamadı',errMicNotFound:'Mikrofon bulunamadı',screenActive:'Ekran paylaşımı aktif',
   screenFail:'Ekran paylaşımı başlatılamadı',
@@ -560,6 +561,7 @@ tk:{
   errRoomName:'Ota ady giriziň',errPerm:'Kamera/Mikrofon rugsat alnamady — Sazlamalardan rugsat bermeli',
   errScreenNotSupp:'Linux desctopynda ekran paýlaşygy häzir döredilmeýär. Bu baglanyşyk syzygy däl.',
   errScreenBackend:'Ekran paýlaşygy üçin brauzerdan giriň (bu platforma goldawaýar)',
+  errScreenPerm:'macOS sazlamalarynda ekran ýazgysyna rugsat beriň, soň programmany täzeden açyň.',
   errScreenInUse:'Başga biri ekran paýlaşýar',
   errCamNotFound:'Kamera taplamady',errMicNotFound:'Mikrofon taplamady',screenActive:'Ekran paýlaşygy işledi',
   screenFail:'Ekran paýlaşygy başladylamady',
@@ -597,6 +599,7 @@ ru:{
   errRoomName:'Введите название комнаты',errPerm:'Не удалось получить доступ к камере/микрофону — разрешите в Системных настройках',
   errScreenNotSupp:'Демонстрация экрана пока не поддерживается в Linux. Это не ошибка соединения.',
   errScreenBackend:'Для демонстрации экрана войдите через браузер (эта платформа не поддерживает)',
+  errScreenPerm:'Разрешите запись экрана в настройках macOS, затем перезапустите приложение.',
   errScreenInUse:'Кто-то уже демонстрирует экран',
   errCamNotFound:'Камера не найдена',errMicNotFound:'Микрофон не найден',screenActive:'Демонстрация экрана активна',
   screenFail:'Не удалось начать демонстрацию экрана',
@@ -634,6 +637,7 @@ en:{
   errRoomName:'Enter a room name',errPerm:'Camera/Microphone access denied — allow in System Settings',
   errScreenNotSupp:'Screen sharing is not yet supported on Linux. This is not a connection error.',
   errScreenBackend:'Join via browser for screen sharing (this platform doesn\'t support it)',
+  errScreenPerm:'Allow Screen Recording in macOS settings, then restart the app.',
   errScreenInUse:'Someone is already sharing their screen',
   errCamNotFound:'Camera not found',errMicNotFound:'Microphone not found',screenActive:'Screen sharing active',
   screenFail:'Screen sharing failed to start',
@@ -704,7 +708,7 @@ const S = (() => {
     serverUrl:'http://localhost:7800',
     media:{cam:false,mic:false,screen:false},
     localStream:null, screenStream:null,
-    peers:{}, remoteStreams:{}, micStates:{}, screenStates:{}, allMuted:false,
+    peers:{}, remoteStreams:{}, remoteScreenStreams:{}, micStates:{}, camStates:{}, screenStates:{}, allMuted:false,
   };
   const L = {};
   return {
@@ -848,7 +852,10 @@ function togCam() {
   emitState();
 }
 
+let screenStarting=false;
+
 async function togScreen() {
+  if(screenStarting) return;
   if(S.get('media').screen){ stopScreen(); return; }
   if(window.pywebview&&window.pywebview.api&&S.get('platform')==='Linux'){
     Toast.show(t('errScreenNotSupp'));
@@ -860,20 +867,32 @@ async function togScreen() {
     Toast.show(t('errScreenInUse'),'err');
     return;
   }
+  screenStarting=true;
   try {
+    if(window.pywebview&&window.pywebview.api&&S.get('platform')==='Darwin'){
+      const permission=await pywebview.api.prepare_screen_capture();
+      if(!permission.supported){ Toast.show(t('errScreenBackend'),'err'); return; }
+      if(!permission.granted||permission.requested){
+        Toast.show(t('errScreenPerm'),'err');
+        return;
+      }
+    }
     const stream = await navigator.mediaDevices.getDisplayMedia({
       video:{cursor:'always'}, audio:false
     });
     S.set('screenStream',stream);
-    S.upd('media',{screen:true,cam:false});
+    S.upd('media',{screen:true});
     stream.getVideoTracks()[0].onended = ()=>stopScreen();
     renderGrid();
-    await replaceVid(stream.getVideoTracks()[0]);
+    await replaceScreenTrack(stream.getVideoTracks()[0]);
     emitState();
     Toast.show(t('screenActive'),'ok');
   } catch(e) {
+    console.warn('[Screen]',e.name,e.message);
     if(e.name!=='AbortError'&&e.name!=='NotAllowedError')
       Toast.show(t('screenFail'),'err');
+  } finally {
+    screenStarting=false;
   }
 }
 
@@ -882,16 +901,18 @@ function stopScreen() {
   if(ss){ ss.getTracks().forEach(t=>t.stop()); S.set('screenStream',null); }
   const ls=S.get('localStream');
   const camTrack=ls&&ls.getVideoTracks()[0];
-  S.upd('media',{screen:false,cam:!!camTrack});
+  S.upd('media',{screen:false,cam:!!(camTrack&&camTrack.enabled)});
   renderGrid();
-  if(camTrack) replaceVid(camTrack);
+  replaceScreenTrack(null);
   emitState();
 }
 
-async function replaceVid(track) {
+async function replaceScreenTrack(track) {
   for(const pc of Object.values(S.get('peers'))){
-    const s=pc.getSenders().find(x=>x.track&&x.track.kind==='video');
-    if(s){ try{ await s.replaceTrack(track); }catch(e){} }
+    if(pc.screenTransceiver){
+      try{ await pc.screenTransceiver.sender.replaceTrack(track); }
+      catch(e){ console.warn('[Screen] Video track replacement failed:',e); }
+    }
   }
 }
 
@@ -925,6 +946,28 @@ function syncCtrls() {
 // ════════════════════════════════════════════════════════
 const ICE={iceServers:[{urls:'stun:stun.l.google.com:19302'}]};
 
+async function configurePeerMedia(pc) {
+  const ls=S.get('localStream'), ss=S.get('screenStream');
+  const tracks=[ls&&ls.getAudioTracks()[0],ls&&ls.getVideoTracks()[0],ss&&ss.getVideoTracks()[0]];
+  const kinds=['audio','video','video'];
+  const transceivers=pc.getTransceivers();
+  const pending=[];
+  for(let i=0;i<3;i++){
+    const stream=i===2?ss:ls;
+    if(!transceivers[i]){
+      transceivers[i]=pc.addTransceiver(tracks[i]||kinds[i],{
+        direction:'sendrecv',streams:stream?[stream]:[]
+      });
+    }else{
+      transceivers[i].direction='sendrecv';
+      pending.push(transceivers[i].sender.replaceTrack(tracks[i]||null));
+      transceivers[i].sender.setStreams(...(stream?[stream]:[]));
+    }
+  }
+  pc.screenTransceiver=transceivers[2];
+  await Promise.all(pending);
+}
+
 function makePeer(peerSid, initiator) {
   const peers=S.get('peers');
   if(peers[peerSid]) return peers[peerSid];
@@ -932,22 +975,21 @@ function makePeer(peerSid, initiator) {
   peers[peerSid]=pc;
   S.set('peers',peers);
 
-  const ls=S.get('localStream'), ss=S.get('screenStream');
-  if(ls) ls.getTracks().forEach(t=>pc.addTrack(t,ls));
-  if(ss) ss.getTracks().forEach(t=>pc.addTrack(t,ss));
+  // Keep the same three slots on both sides, including audio-only participants.
+  // Reserving the screen slot lets sharing start/stop without replacing camera
+  // video or renegotiating the call. The responder binds the slots AFTER the
+  // offer is applied; pre-creating them there creates duplicate transceivers.
 
   pc.ontrack=e=>{
-    const streams=S.get('remoteStreams');
+    const key=e.transceiver===pc.getTransceivers()[2]?'remoteScreenStreams':'remoteStreams';
+    const streams=S.get(key);
     if(!streams[peerSid]) streams[peerSid]=new MediaStream();
     if(!streams[peerSid].getTracks().some(t=>t.id===e.track.id)){
       streams[peerSid].addTrack(e.track);
     }
-    S.set('remoteStreams',streams);
-    const tile=document.getElementById('tile-'+peerSid); if(!tile) return;
-    const v=tile.querySelector('video'); if(!v) return;
-    v.srcObject=streams[peerSid];
-    v.style.display='';
-    const av=tile.querySelector('.av'); if(av) av.style.display='none';
+    S.set(key,streams);
+    e.track.onunmute=()=>renderGrid();
+    renderGrid();
   };
 
   pc.onicecandidate=e=>{
@@ -959,7 +1001,8 @@ function makePeer(peerSid, initiator) {
   };
 
   if(initiator){
-    pc.createOffer()
+    configurePeerMedia(pc)
+      .then(()=>pc.createOffer())
       .then(o=>pc.setLocalDescription(o))
       .then(()=>sock().emit('webrtc_offer',{target_sid:peerSid,offer:pc.localDescription}))
       .catch(e=>console.error('[RTC] offer:',e));
@@ -970,17 +1013,22 @@ function makePeer(peerSid, initiator) {
 function dropPeer(sid) {
   const peers=S.get('peers');
   if(peers[sid]){ peers[sid].close(); delete peers[sid]; S.set('peers',peers); }
-  const streams=S.get('remoteStreams');
-  if(streams[sid]){ streams[sid].getTracks().forEach(t=>t.stop()); delete streams[sid]; S.set('remoteStreams',streams); }
+  for(const key of ['remoteStreams','remoteScreenStreams']){
+    const streams=S.get(key);
+    if(streams[sid]){ streams[sid].getTracks().forEach(t=>t.stop()); delete streams[sid]; S.set(key,streams); }
+  }
+  const cams=S.get('camStates'); delete cams[sid]; S.set('camStates',cams);
   renderGrid();
 }
 
 function dropAllPeers() {
   Object.values(S.get('peers')).forEach(p=>p.close());
   S.set('peers',{});
-  Object.values(S.get('remoteStreams')).forEach(s=>s.getTracks().forEach(t=>t.stop()));
-  S.set('remoteStreams',{});
-  S.set('micStates',{}); S.set('screenStates',{});
+  for(const key of ['remoteStreams','remoteScreenStreams']){
+    Object.values(S.get(key)).forEach(s=>s.getTracks().forEach(t=>t.stop()));
+    S.set(key,{});
+  }
+  S.set('micStates',{}); S.set('camStates',{}); S.set('screenStates',{});
 }
 
 
@@ -989,17 +1037,22 @@ function dropAllPeers() {
 // ════════════════════════════════════════════════════════
 function renderGrid() {
   const g=document.getElementById('grid');
+  // Release previous players before rebuilding, especially the audible peer
+  // videos. Detached autoplay elements can otherwise keep audio outputs alive.
+  g.querySelectorAll('video').forEach(v=>{v.pause();v.srcObject=null;});
   g.innerHTML='';
   const room=S.get('room'), members=room?room.members:[];
   const mySid=S.get('user').sid;
   const ss=S.get('screenStates'), localScr=S.get('media').screen;
   let sharerSid=null, scrStream=null;
   if(localScr){ sharerSid=mySid; scrStream=S.get('screenStream'); }
-  else{ for(const [sid,sh] of Object.entries(ss)){ if(sh){ sharerSid=sid; scrStream=S.get('remoteStreams')[sid]; break; } } }
+  else{ for(const [sid,sh] of Object.entries(ss)){ if(sh){ sharerSid=sid; scrStream=S.get('remoteScreenStreams')[sid]; break; } } }
   if(sharerSid&&scrStream){
     g.setAttribute('data-c','1');
+    g.classList.remove('many');
     g.classList.add('scrmode');
-    const st=makeScrTile(scrStream); st.classList.add('scr-main'); g.appendChild(st);
+    const sharer=sharerSid===mySid?S.get('user'):members.find(m=>m.sid===sharerSid);
+    const st=makeScrTile(scrStream,sharer); st.classList.add('scr-main'); g.appendChild(st);
     const strip=el('div','scr-strip');
     strip.appendChild(makeSelfTile());
     members.forEach(m=>{ if(m.sid!==mySid) strip.appendChild(makePeerTile(m)); });
@@ -1040,10 +1093,11 @@ function makeSelfTile(){
 function makePeerTile(m){
   const tile=el('div','tile'); tile.id='tile-'+m.sid; tile.dataset.sid=m.sid;
   const stream=S.get('remoteStreams')[m.sid];
-  const v=el('video'); v.autoplay=true; v.playsInline=true; v.style.display=stream?'':'none';
+  const showCam=stream&&stream.getVideoTracks().length&&S.get('camStates')[m.sid]!==false;
+  const v=el('video'); v.autoplay=true; v.playsInline=true; v.style.display=showCam?'':'none';
   if(stream){ v.srcObject=stream; setTimeout(()=>v.play().catch(()=>{}), 50); }
   tile.appendChild(v);
-  const av=el('div','av'); av.textContent=(m.name||'?')[0].toUpperCase(); av.style.display=stream?'none':''; tile.appendChild(av);
+  const av=el('div','av'); av.textContent=(m.name||'?')[0].toUpperCase(); av.style.display=showCam?'none':''; tile.appendChild(av);
   const ov=el('div','tover');
   const nm=el('span','tname'); nm.textContent=m.name||'?'; ov.appendChild(nm);
   const badges=el('div','tbadges');
@@ -1073,10 +1127,11 @@ function makePeerTile(m){
   return tile;
 }
 
-function makeScrTile(stream){
-  const u=S.get('user');
+function makeScrTile(stream,sharer){
+  const u=sharer||{name:'?'};
   const tile=el('div','tile scrtile'); tile.id='tile-scr';
   const v=el('video'); v.autoplay=true; v.muted=true; v.playsInline=true; v.srcObject=stream; tile.appendChild(v);
+  setTimeout(()=>v.play().catch(()=>{}),50);
   const ov=el('div','tover');
   ov.innerHTML=`<span class="tname">${ICO.screen} ${esc(u.name)} — ${t('screenTile')}</span>`;
   tile.appendChild(ov);
@@ -1325,6 +1380,7 @@ function ensureSocket(){
       renderGrid();
       Toast.show(data.user.name+t('joined'),'ok');
       makePeer(data.user.sid,false);
+      emitState(); // Let a late joiner know if this participant is sharing.
       cntUpdate();
     });
 
@@ -1369,13 +1425,8 @@ function ensureSocket(){
 
     _sk.on('peer_media_state',data=>{
       const ms=S.get('micStates'); ms[data.sid]=data.mic; S.set('micStates',ms);
+      const cs=S.get('camStates'); cs[data.sid]=data.cam; S.set('camStates',cs);
       const ss=S.get('screenStates'); ss[data.sid]=data.screen; S.set('screenStates',ss);
-      const tile=document.getElementById('tile-'+data.sid); if(!tile) return;
-      const badges=tile.querySelector('.tbadges'); if(!badges) return;
-      let mb=tile.querySelector('.tbadge-m');
-      if(!data.mic){
-        if(!mb){ mb=document.createElement('span'); mb.className='tbadge tbadge-m'; mb.innerHTML=ICO.micOff; badges.appendChild(mb); }
-      } else if(mb){ mb.remove(); }
       renderGrid();
     });
 
@@ -1383,6 +1434,7 @@ function ensureSocket(){
       const pc=makePeer(data.from_sid,false);
       try{
         await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
+        await configurePeerMedia(pc);
         const ans=await pc.createAnswer();
         await pc.setLocalDescription(ans);
         _sk.emit('webrtc_answer',{target_sid:data.from_sid,answer:pc.localDescription});

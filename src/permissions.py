@@ -103,6 +103,29 @@ def setup_blocking(_pywebview_window=None, delay: float = 0.0) -> dict[str, Any]
     return dict(_STATUS)
 
 
+def request_screen_capture_permission() -> dict[str, Any]:
+    """Request macOS screen recording only after the user chooses to share.
+
+    This is independent of camera/microphone approval. A newly approved
+    permission may need an application restart before Chromium can use it.
+    """
+    if platform.system() != "Darwin":
+        return {"granted": True, "requested": False}
+    try:
+        import Quartz
+
+        if Quartz.CGPreflightScreenCaptureAccess():
+            print("[Perm] Screen recording: granted")
+            return {"granted": True, "requested": False}
+        _set_usage_descriptions()
+        granted = bool(Quartz.CGRequestScreenCaptureAccess())
+        print(f"[Perm] Screen recording request: {'granted' if granted else 'not granted'}")
+        return {"granted": granted, "requested": True}
+    except Exception as exc:
+        print(f"[Perm] Screen recording permission failed: {exc}")
+        return {"granted": False, "requested": False, "error": str(exc)}
+
+
 def status() -> dict[str, Any]:
     return dict(_STATUS)
 

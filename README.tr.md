@@ -65,7 +65,7 @@ r-offcall bu net kullanım alanına odaklanır: **küçük, güvenilir ve aynı 
 | Keşif | mDNS / Zeroconf | Çoklu yayın destekleyen aynı ağda host’u bulur. |
 | Sinyalleşme | İstemci ↔ host | Oda üyeliği, WebRTC offer/answer, ICE adayları ve moderasyon olayları. |
 | Kamera / mikrofon | Katılımcı ↔ katılımcı | Peer-to-peer WebRTC medyası; host olmak medyayı otomatik almaz. |
-| Ekran paylaşımı | Katılımcı ↔ katılımcı | macOS Qt6 masaüstü uygulaması ve uyumlu tarayıcılarda desteklenir. Linux masaüstü arayüzünde özellikle devre dışıdır. |
+| Ekran paylaşımı | Katılımcı ↔ katılımcı | macOS Qt6 ve uyumlu tarayıcılar ekranı kamerayla birlikte gönderebilir. Linux masaüstü istemcisi ikisini de alabilir; kendi ekranını gönderme özelliği devre dışıdır. Tüm katılımcılar aynı sürümü kullanmalıdır. |
 
 ## Artılar ve eksiler
 
@@ -147,6 +147,8 @@ python scripts/verify.py
 ```
 
 Komut Python kaynaklarını derler, yerel statik sunucuyu kontrol eder ve Qt ekran-seçim yolunu kamera ya da ekran gerektirmeden test eder.
+
+`python scripts/verify_media.py` ayrıca görünmeyen Qt pencerelerinde gerçek WebRTC teklif/yanıt anlaşmasını, kamera ve ekranın ayrı işlenmesini, sonradan katılmayı ve katılımcı şeridini kontrol eder. Yapay medya kullanır; alınan video karelerini veya gerçek Mac/Linux görüşmesini doğrulamaz.
 
 Kurum ihtiyaçları büyürse sonraki adımlar HTTPS, manuel host adresi, yerel kimlik/SSO, kalıcı politika ve denetim kaydı, TURN/SFU ve imzalı masaüstü paketleri olabilir.
 

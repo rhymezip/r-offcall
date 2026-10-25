@@ -137,6 +137,52 @@ def _start_server(bind_host="0.0.0.0", port=PORT):
 
 
 # ── Window events ────────────────────────────────────────────────
+def on_initialized(renderer):
+    """Keep Qt's real desktop picker and permit capture for our loopback UI."""
+    if platform.system() != "Darwin" or _gui != "qt" or renderer != "qtwebengine":
+        return
+    import webview.platforms.qt as qtmod
+
+    if getattr(qtmod, "_roffcall_capture_configured", False):
+        return
+    original_append = qtmod.environ_append
+
+    def append_flags(key, *values, sep=" "):
+        if key == "QTWEBENGINE_CHROMIUM_FLAGS":
+            # pywebview adds this for AV permission automation. Chromium also
+            # uses it for display capture, bypassing Qt's desktop picker.
+            values = tuple(v for v in values if v != "--use-fake-ui-for-media-stream")
+        original_append(key, *values, sep=sep)
+
+    def media_permission(page, origin, feature):
+        feature_type = qtmod.QWebPage.Feature
+        policy = qtmod.QWebPage.PermissionPolicy
+        if feature == feature_type.DesktopVideoCapture:
+            local = origin.scheme() in ("http", "https") and origin.host() in (
+                "127.0.0.1", "localhost", "::1"
+            )
+            page.setFeaturePermission(
+                origin, feature,
+                policy.PermissionGrantedByUser if local else policy.PermissionDeniedByUser,
+            )
+            print(f"[App] Qt desktop permission: {'granted' if local else 'denied'}")
+        elif feature in (
+            feature_type.MediaAudioCapture,
+            feature_type.MediaVideoCapture,
+            feature_type.MediaAudioVideoCapture,
+        ):
+            # Same AV policy as pywebview, using Qt6's required enum instead
+            # of its integer policy (which PyQt6 rejects).
+            page.setFeaturePermission(origin, feature, policy.PermissionGrantedByUser)
+        else:
+            page.setFeaturePermission(origin, feature, policy.PermissionDeniedByUser)
+
+    qtmod.environ_append = append_flags
+    qtmod.BrowserView.WebPage.onFeaturePermissionRequested = media_permission
+    qtmod._roffcall_capture_configured = True
+    print("[App] Qt native desktop capture configured")
+
+
 def _screen_capture_supported() -> bool:
     """Screen sharing via getDisplayMedia is supported on macOS (WKWebView or Qt)."""
     return platform.system() == "Darwin"
@@ -165,30 +211,46 @@ def _select_desktop_media(req):
             return True
         except Exception as window_error:
             print(f"[App] Screen capture secilemedi: {screen_error} / {window_error}")
+            if hasattr(req, "cancel"):
+                req.cancel()
             return False
 
-
 def _hook_desktop_media():
-    """Connect Qt 6's desktop-media signal after the page has loaded (Qt only)."""
+    """Enable Qt screen capture and install its handler on Qt's GUI thread."""
     if not _screen_capture_supported() or _gui != "qt":
         return
 
     try:
         import webview.platforms.qt as qtmod
+
+        def configure(bv):
+            try:
+                # pywebview 5 calls this ``view``; version 6 calls it ``webview``.
+                view = getattr(bv, "webview", None) or getattr(bv, "view", None)
+                if view is None:
+                    return
+                page = view.page()
+                if not hasattr(page, "desktopMediaRequested"):
+                    print("[App] Qt WebEngine does not support desktop capture")
+                    return
+                # Qt disables getDisplayMedia by default, even with a handler.
+                page.settings().setAttribute(
+                    qtmod.QWebEngineSettings.WebAttribute.ScreenCaptureEnabled, True
+                )
+                if not getattr(page, "_roffcall_desktop_hooked", False):
+                    page.desktopMediaRequested.connect(_select_desktop_media)
+                    page._roffcall_desktop_hooked = True
+                    print("[App] Desktop capture enabled and handler ready")
+            except Exception as exc:
+                print(f"[App] Desktop capture setup failed: {exc}")
+
+        # The loaded event runs on a pywebview worker. Use its existing Qt
+        # dispatcher so both settings and the signal receiver live on the GUI
+        # thread; a worker-thread receiver otherwise has no Qt event loop.
         for bv in list(qtmod.BrowserView.instances.values()):
-            # pywebview 5 calls this ``view``; version 6 calls it ``webview``.
-            view = getattr(bv, "webview", None) or getattr(bv, "view", None)
-            if view is None:
-                continue
-            page = view.page()
-            if hasattr(page, "desktopMediaRequested"):
-                if getattr(page, "_roffcall_desktop_hooked", False):
-                    continue
-                page.desktopMediaRequested.connect(_select_desktop_media)
-                page._roffcall_desktop_hooked = True
-                print("[App] desktopMediaRequested hook OK")
-    except Exception as e:
-        print(f"[App] desktopMedia hook: {e}")
+            bv.create_window_trigger.emit(lambda bv=bv: configure(bv))
+    except Exception as exc:
+        print(f"[App] desktopMedia hook: {exc}")
 
 
 def on_loaded():
@@ -235,6 +297,10 @@ class JSApi:
         return permissions.setup_blocking(_window, delay=0.0)
     def get_permission_status(self):
         return permissions.status()
+    def prepare_screen_capture(self):
+        if platform.system() == "Darwin" and _gui != "qt":
+            return {"supported": False, "granted": False, "requested": False}
+        return {"supported": True, **permissions.request_screen_capture_permission()}
     def screen_share_supported(self):
         return _screen_capture_supported()
 
@@ -257,6 +323,7 @@ def main():
         background_color="#0f0f0f",
         js_api=JSApi(server_url, real_ip_url),
     )
+    _window.events.initialized += on_initialized
     _window.events.loaded += on_loaded
     _window.events.closed += on_closed
 

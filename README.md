@@ -66,7 +66,7 @@ r-offcall is built for that focused case: a **small, trusted, same-network meeti
 | Discovery | mDNS / Zeroconf | Finds hosts on the same multicast-capable network. |
 | Signaling | Client ↔ host | Room membership, WebRTC offers/answers, ICE candidates, moderation events. |
 | Camera / microphone | Participant ↔ participant | WebRTC peer-to-peer media; hosting does not automatically receive media. |
-| Screen share | Participant ↔ participant | macOS Qt6 desktop app and compatible browsers. Linux desktop UI intentionally disables it. |
+| Screen share | Participant ↔ participant | macOS Qt6 desktop app and compatible browsers can send a screen alongside the camera. Linux desktop clients can receive both; sending a screen is intentionally disabled there. Update all participants to the same version. |
 
 ## Strengths and trade-offs
 
@@ -167,6 +167,8 @@ python scripts/verify.py
 ```
 
 The check compiles Python sources, verifies the local static server, and tests the Qt desktop-media selection path without requiring a camera or display.
+
+`python scripts/verify_media.py` additionally checks real WebRTC offer/answer negotiation, separate camera/screen routing, late joins and the participant strip in hidden Qt frames. It uses synthetic media and does not verify received video frames or a real Mac/Linux call.
 
 ## Roadmap ideas
 
